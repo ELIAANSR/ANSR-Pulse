@@ -1138,7 +1138,7 @@ export default function ANSRPulse() {
       const params = new URLSearchParams(window.location.search);
       const r = params.get("r");
       if (r) {
-        const data = JSON.parse(atob(r));
+        const data = JSON.parse(decodeURIComponent(escape(atob(r))));
         if (data.a && data.n) {
           setAnswers(data.a);
           setUserName(data.n);
@@ -1181,7 +1181,7 @@ export default function ANSRPulse() {
       setSecondary(sec);
 
       // Encode results into URL so email can link back
-      const resultsData = btoa(JSON.stringify({ a: answers, n: name }));
+      const resultsData = btoa(unescape(encodeURIComponent(JSON.stringify({ a: answers, n: name }))));
       const resultsUrl = `${window.location.origin}${window.location.pathname}?r=${resultsData}`;
 
       // Fully automated: saves to Google Sheet + sends email with results
