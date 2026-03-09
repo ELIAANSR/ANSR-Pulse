@@ -1132,44 +1132,7 @@ export default function ANSRPulse() {
   const [secondary, setSecondary] = useState(null);
   const [userName, setUserName] = useState("");
 
-  // Check for results link from email
-  useEffect(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const r = params.get("r");
-      if (r) {
-        useEffect(() => {}, []);
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const r = params.get("r");
-      if (r) {
-        const data = JSON.parse(decodeURIComponent(escape(atob(r))));
-        if (data.a && data.n) {
-          setAnswers(data.a);
-          setUserName(data.n);
-          const s = calcScores(data.a);
-          setScores(s);
-          const primary = assignProfile(s);
-          setProfile(primary);
-          setSecondary(getSecondaryProfile(s, primary.key));
-          setScreen("results");
-        }
-      }
-    } catch (e) { /* ignore invalid params */ }
-  }, []);
-        if (data.a && data.n) {
-          setAnswers(data.a);
-          setUserName(data.n);
-          const s = calcScores(data.a);
-          setScores(s);
-          const primary = assignProfile(s);
-          setProfile(primary);
-          setSecondary(getSecondaryProfile(s, primary.key));
-          setScreen("results");
-        }
-      }
-    } catch (e) { /* ignore invalid params */ }
-  }, []);
+  useEffect(() => {}, []);
 
   const handleAnswer = useCallback((opt) => {
     const newAnswers = [...answers, opt];
