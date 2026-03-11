@@ -48,12 +48,12 @@ export default async function handler(req, res) {
 
     // ═══ 3. SEND EMAIL VIA RESEND ═══
     const RESEND_KEY = process.env.RESEND_API_KEY;
-    const FROM_EMAIL = process.env.FROM_EMAIL || "ELIA <hello@yourdomain.com>";
+    const FROM_EMAIL = process.env.FROM_EMAIL || "Elia - Beauty That Heals <care@eliaheals.com>";
 
     if (RESEND_KEY) {
       const emailHtml = buildEmail(name, profile, secondary, tagline, scores, results_url);
 
-      await fetch("https://api.resend.com/emails", {
+      const emailRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${RESEND_KEY}`,
@@ -66,6 +66,13 @@ export default async function handler(req, res) {
           html: emailHtml,
         }),
       });
+      const emailData = await emailRes.json();
+      console.log("Resend response:", JSON.stringify(emailData));
+      if (!emailRes.ok) {
+        console.error("Resend error:", emailData);
+      }
+    } else {
+      console.error("RESEND_API_KEY not set in environment variables");
     }
 
     return res.status(200).json({ status: "ok" });
