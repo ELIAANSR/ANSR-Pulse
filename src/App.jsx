@@ -538,7 +538,7 @@ function IntroScreen({ onStart }) {
 
       <p style={{ fontFamily: T.fonts.body, fontSize: "clamp(17px, 3vw, 20px)", color: T.text,
         lineHeight: 1.8, marginBottom: 60, fontStyle: "italic", opacity: 0.85 }}>
-        Ten questions that map what your nervous system<br />has stopped letting you feel.</p>
+        Eleven questions that map what your nervous system<br />has stopped letting you feel.</p>
 
       <button onClick={onStart} style={{ fontFamily: T.fonts.display, fontSize: 15,
         letterSpacing: "0.15em", textTransform: "uppercase", background: "transparent",
