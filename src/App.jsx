@@ -517,7 +517,9 @@ function IntroScreen({ onStart }) {
 
   return (
     <div style={{ opacity: vis ? 1 : 0, transition: "opacity 1.2s ease", textAlign: "center",
-      padding: "60px 24px", maxWidth: 540, margin: "0 auto" }}>
+      padding: "80px 24px", maxWidth: 540, margin: "0 auto",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      minHeight: "100vh" }}>
       <p style={{ fontFamily: T.fonts.display, fontSize: 28, fontWeight: 400, color: T.text,
         letterSpacing: "0.35em", marginBottom: 40 }}>ELIA</p>
 
@@ -535,7 +537,7 @@ function IntroScreen({ onStart }) {
         Aesthetic Nervous System Regulation</p>
 
       <p style={{ fontFamily: T.fonts.body, fontSize: "clamp(17px, 3vw, 20px)", color: T.text,
-        lineHeight: 1.8, marginBottom: 48, fontStyle: "italic", opacity: 0.85 }}>
+        lineHeight: 1.8, marginBottom: 60, fontStyle: "italic", opacity: 0.85 }}>
         Ten questions that map what your nervous system<br />has stopped letting you feel.</p>
 
       <button onClick={onStart} style={{ fontFamily: T.fonts.display, fontSize: 15,
@@ -1074,7 +1076,7 @@ function SettleScreen({ onReady }) {
         lineHeight: 1.9, marginBottom: 32, fontStyle: "italic" }}>
         Find a quiet moment.<br />This works best when you're alone.</p>
       <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.textMuted,
-        lineHeight: 1.8, marginBottom: 48 }}>
+        lineHeight: 1.8, marginBottom: 60 }}>
         Answer from your body, not your mind.<br />There are no right answers. Only honest ones.</p>
       <button onClick={onReady} style={{ fontFamily: T.fonts.display, fontSize: 15,
         letterSpacing: "0.12em", background: T.warmWhite,
@@ -1103,11 +1105,17 @@ function BreathingScreen({ onComplete }) {
       display: "flex", flexDirection: "column", alignItems: "center",
       justifyContent: "center", minHeight: "100vh", padding: 24 }}>
       <div style={{
-        width: pulse ? 80 : 40, height: pulse ? 80 : 40,
+        width: pulse ? 120 : 60, height: pulse ? 120 : 60,
         borderRadius: "50%", border: `1px solid ${T.accent}`,
-        opacity: pulse ? 0.3 : 0.6,
+        opacity: pulse ? 0.4 : 0.6,
         transition: "all 2.5s ease-in-out",
-      }} />
+        display: "flex", alignItems: "center", justifyContent: "center",
+        position: "relative",
+      }}>
+        <p style={{ fontFamily: T.fonts.display, fontSize: 20, fontWeight: 400,
+          color: T.text, letterSpacing: "0.25em", margin: 0, opacity: 0.8,
+          position: "absolute" }}>ELIA</p>
+      </div>
       <p style={{ fontFamily: T.fonts.body, fontSize: 16, color: T.textMuted,
         marginTop: 32, fontStyle: "italic", opacity: vis ? 0.7 : 0,
         transition: "opacity 1.5s ease 0.8s" }}>
