@@ -1182,6 +1182,8 @@ export default function ANSRPulse() {
     } catch (err) {
       console.error("Scoring error:", err);
     }
+    // Fire Meta Pixel Lead event
+    if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: primary ? primary.name : 'Unknown' });
     setScreen("results");
     window.scrollTo(0, 0);
   }, [answers]);
