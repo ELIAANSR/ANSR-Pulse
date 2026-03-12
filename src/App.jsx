@@ -1183,7 +1183,7 @@ export default function ANSRPulse() {
       console.error("Scoring error:", err);
     }
     // Fire Meta Pixel Lead event
-    if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: primary ? primary.name : 'Unknown' });
+    if (typeof fbq === 'function') fbq('track', 'Lead');
     setScreen("results");
     window.scrollTo(0, 0);
   }, [answers]);
