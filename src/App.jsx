@@ -325,24 +325,19 @@ function assignProfile(scores) {
   const hasSpike = highest.score >= 7;
   const anyLow = dims.some((d) => d.score <= 5);
 
-  // STEP 1: Flat profiles (range < 1)
   if (range < 1.0) {
     if (avg >= 7) return PROFILES.newmoon;
     if (avg <= 4) return PROFILES.eclipse;
     return PROFILES.velvetblade;
   }
-  // STEP 2: High average = well-regulated
   if (avg >= 8 && range < 5.5) return PROFILES.newmoon;
-  // STEP 3: Very low average
   if (avg <= 2.5) {
     if (scores.performance >= avg + 2) return PROFILES.sunfire;
     if (scores.sensitivity >= 6) return PROFILES.summerstorm;
     return PROFILES.eclipse;
   }
-  // STEP 4: Many contracted dimensions
   if (contracted >= 4 && !hasSpike) return PROFILES.eclipse;
 
-  // STEP 5: Pattern matching
   const isEclipse = (
     (scores.sensitivity <= 3 && scores.vitality <= 3.5 && scores.performance <= 5 &&
      scores.connection <= 4.5 && !hasSpike) ||
@@ -372,16 +367,13 @@ function assignProfile(scores) {
     (emerging + open) >= 2
   );
 
-  // STEP 6: Resolution with conflict handling
   if (isEclipse) return PROFILES.eclipse;
-  // Summer Storm vs Heartwood: sensitivity level decides
   if (isSummerStorm && isHeartwood) {
     if (scores.sensitivity >= 8) return PROFILES.summerstorm;
     if (scores.connection <= avg - 3) return PROFILES.heartwood;
     return PROFILES.summerstorm;
   }
   if (isSummerStorm) return PROFILES.summerstorm;
-  // Sunfire vs Heartwood: performance decides (trapped=SF, tired=HW)
   if (isSunfire && isHeartwood) {
     return scores.performance <= 4 ? PROFILES.sunfire : PROFILES.heartwood;
   }
@@ -390,7 +382,6 @@ function assignProfile(scores) {
   if (isSunfire) return PROFILES.sunfire;
   if (isNewMoon) return PROFILES.newmoon;
 
-  // STEP 7: Fallback — lowest dimension determines profile
   if (avg <= 5.5) {
     const fallback = {alertness:"sunfire",sensitivity:"velvetblade",connection:"heartwood",
       vitality:"eclipse",aliveness:"heartwood",performance:"velvetblade"};
@@ -406,34 +397,20 @@ function assignProfile(scores) {
 }
 
 function getSecondaryProfile(scores, primaryKey) {
-  // Score each profile based on how well dimensions match its signature
   const profileScores = {};
   const avg = Object.values(scores).reduce((s, v) => s + v, 0) / 6;
 
-  // Sunfire: low alertness + high performance = high match
   profileScores.sunfire = (10 - scores.alertness) * 2 + scores.performance + (10 - scores.vitality);
-
-  // Velvet Blade: low sensitivity + controlled alertness = high match
   profileScores.velvetblade = (10 - scores.sensitivity) * 2 + scores.alertness + (10 - scores.connection);
-
-  // Eclipse: low everything, especially sensitivity + vitality
   profileScores.eclipse = (10 - scores.sensitivity) + (10 - scores.vitality) + (10 - scores.aliveness) + (10 - scores.connection);
-
-  // Summer Storm: high sensitivity + low other things
   profileScores.summerstorm = scores.sensitivity * 2 + (10 - scores.alertness) + (10 - scores.vitality);
-
-  // Heartwood: low connection + low aliveness + still functioning
   profileScores.heartwood = (10 - scores.connection) * 2 + (10 - scores.aliveness) + scores.performance * 0.5;
-
-  // New Moon: mixed/moderate with some high dimensions
-  profileScores.newmoon = Math.abs(avg - 5.5) < 2 ? 15 : 5; // higher score when avg is moderate
+  profileScores.newmoon = Math.abs(avg - 5.5) < 2 ? 15 : 5;
   profileScores.newmoon += scores.sensitivity > 5 ? 5 : 0;
   profileScores.newmoon += scores.aliveness > 5 ? 5 : 0;
 
-  // Remove primary from consideration
   delete profileScores[primaryKey];
 
-  // Find highest scoring remaining profile
   const sorted = Object.entries(profileScores).sort((a, b) => b[1] - a[1]);
   return PROFILES[sorted[0][0]];
 }
@@ -453,7 +430,6 @@ function RadarChart({ scores, size = 260, profileColor, secondaryColor }) {
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ overflow: "visible" }}>
-      {/* Secondary undertone — subtle outer ring */}
       {secondaryColor && (
         <circle cx={cx} cy={cy} r={r + 6} fill="none"
           stroke="rgba(240,232,220,0.2)" strokeWidth={1} strokeDasharray="4 8" />
@@ -487,7 +463,6 @@ function RadarChart({ scores, size = 260, profileColor, secondaryColor }) {
           </text>
         );
       })}
-      {/* Center anchor (Cartier: every design radiates from a center stone) */}
       <circle cx={cx} cy={cy} r={2.5} fill={profileColor} opacity={0.6} />
     </svg>
   );
@@ -586,7 +561,6 @@ function QuestionScreen({ question, index, total, onAnswer, onBack }) {
             letterSpacing: "0.06em" }}>{index + 1} of {total}</span>
         </div>
 
-        {/* Progress dots (Aman: journey, not a task) */}
         <div style={{ display: "flex", gap: 6, marginBottom: 6, justifyContent: "center" }}>
           {Array.from({ length: total }, (_, i) => (
             <div key={i} style={{
@@ -691,18 +665,24 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
     insight: INSIGHTS[d.key][getBand(scores[d.key]).label],
   }));
 
-  const lowestDim = [...dims].sort((a, b) => a.score - b.score)[0];
+  // Sort dimensions by score descending — top 3 get full display, bottom 3 dimmed
+  const dimsSorted = [...dims].sort((a, b) => b.score - a.score);
+  const topDims = dimsSorted.slice(0, 3);
+  const bottomDims = dimsSorted.slice(3);
+
   const profilePractice = PROFILE_PRACTICES[profile.key];
   const avg = dims.reduce((s, d) => s + d.score, 0) / dims.length;
   const isHighScorer = profile.key === "newmoon" && avg >= 7.5;
 
-  // Use high-score variants when applicable
   const displayTagline = isHighScorer && profile.taglineHigh ? profile.taglineHigh : profile.tagline;
   const displayDescription = isHighScorer && profile.descriptionHigh ? profile.descriptionHigh : profile.description;
   const displayHope = isHighScorer && profile.hopeHigh ? profile.hopeHigh : profile.hope;
 
-  // Split description into paragraphs
   const descParagraphs = displayDescription.split("\n\n");
+
+  // Shorten practice to first 3 sentences
+  const practiceSentences = profilePractice.practice.split('. ');
+  const shortPractice = practiceSentences.slice(0, 3).join('. ') + (practiceSentences.length > 3 ? '.' : '');
 
   return (
     <div style={{ opacity: vis ? 1 : 0, transition: "opacity 1s ease",
@@ -752,7 +732,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           don't have to stay in it.</p>
       )}
 
-      {/* ── Divider (Riva) ── */}
+      {/* ── Divider ── */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "8px 0 40px" }}>
         <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${T.border})` }} />
         <div style={{ width: 4, height: 4, background: T.accent, transform: "rotate(45deg)", opacity: 0.3 }} />
@@ -790,13 +770,13 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         </div>
       </div>
 
-      {/* ── Dimension Scores ── */}
-      <div style={{ marginBottom: 40 }}>
+      {/* ── Dimension Scores — TOP 3 (full display) ── */}
+      <div style={{ marginBottom: 16 }}>
         <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
           letterSpacing: "0.12em", marginBottom: 20 }}>
           Your Six Dimensions</p>
 
-        {dims.map((d) => (
+        {topDims.map((d) => (
           <div key={d.key} style={{ marginBottom: 22, paddingBottom: 22,
             borderBottom: `1px solid ${T.border}` }}>
             <div style={{ display: "flex", justifyContent: "space-between",
@@ -823,9 +803,37 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         ))}
       </div>
 
-      {/* ── Practice ── */}
+      {/* ── Dimension Scores — BOTTOM 3 (dimmed, bar + score only) ── */}
+      <div style={{ marginBottom: 16, opacity: 0.35 }}>
+        {bottomDims.map((d) => (
+          <div key={d.key} style={{ marginBottom: 14, paddingBottom: 14,
+            borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ display: "flex", justifyContent: "space-between",
+              alignItems: "baseline", marginBottom: 6 }}>
+              <span style={{ fontFamily: T.fonts.ui, fontSize: 12, color: T.text,
+                letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500 }}>
+                {d.label}</span>
+              <span style={{ fontFamily: T.fonts.ui, fontSize: 11,
+                color: T.textDim }}>{d.score}/10</span>
+            </div>
+            <div style={{ width: "100%", height: 4, background: "rgba(255,255,255,0.05)",
+              borderRadius: 2 }}>
+              <div style={{ width: `${Math.max(d.score * 10, 5)}%`, height: "100%",
+                background: `linear-gradient(90deg, ${d.band.color}88, ${d.band.color})`,
+                borderRadius: 2, transition: "width 1.2s ease" }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Upsell hint after dimmed dimensions ── */}
+      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.accent,
+        fontStyle: "italic", marginBottom: 40, lineHeight: 1.6 }}>
+        Full analysis of all 6 dimensions in your ANSR Profile →</p>
+
+      {/* ── Practice (shortened to 3 sentences) ── */}
       <div style={{ background: T.accentGlow, border: `1px solid ${T.accentSoft}`,
-        padding: "24px 24px", marginBottom: 40 }}>
+        padding: "24px 24px", marginBottom: 12 }}>
         <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
           letterSpacing: "0.12em", marginBottom: 4 }}>
           Your First Practice</p>
@@ -833,8 +841,13 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           color: T.text, marginBottom: 14 }}>
           {profilePractice.title}</p>
         <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.text,
-          lineHeight: 1.8 }}>{profilePractice.practice}</p>
+          lineHeight: 1.8 }}>{shortPractice}</p>
       </div>
+
+      {/* ── Practice upsell hint ── */}
+      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.accent,
+        fontStyle: "italic", marginBottom: 40, lineHeight: 1.6 }}>
+        Your full Profile includes 3 practices matched to your {profile.name}–{secondary ? secondary.name : ""} combination.</p>
 
       {/* ── Secondary Profile ── */}
       {secondary && (
@@ -864,71 +877,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         </div>
       )}
 
-      {/* ── Divider (Riva) ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "8px 0 40px" }}>
-        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${T.border})` }} />
-        <div style={{ width: 4, height: 4, background: T.accent, transform: "rotate(45deg)", opacity: 0.3 }} />
-        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.border}, transparent)` }} />
-      </div>
-
-      {/* ── The Six ANSR Profiles ── */}
-      <div style={{ marginBottom: 40 }}>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
-          letterSpacing: "0.12em", marginBottom: 24 }}>
-          The Six ANSR Profiles</p>
-
-        {[
-          { name: "Sunfire", sig: "Burns magnificent and unsustainable.",
-            color: "#D4845A", key: "sunfire",
-            desc: "Her nervous system is locked in activation. She performs at extraordinary levels but her body never comes down." },
-          { name: "Velvet Blade", sig: "Elegant and dangerous. The danger is to yourself.",
-            color: "#9B7A8F", key: "velvetblade",
-            desc: "She built armour out of elegance. Her composure is impeccable but it's become a cage." },
-          { name: "Eclipse", sig: "The light didn't leave. Something moved in front of it.",
-            color: "#6B7A8B", key: "eclipse",
-            desc: "Something bright has been covered over. She functions, she delivers, she shows up — but the experience of being alive has gone flat." },
-          { name: "Summer Storm", sig: "You feel everything. That's not the problem.",
-            color: "#8B6B5C", key: "summerstorm",
-            desc: "Her sensitivity is fully alive — and it's flooding her. She absorbs everything: tension, beauty, other people's pain." },
-          { name: "Heartwood", sig: "The one who holds everything up. The one nobody thinks to check on.",
-            color: "#7A8B5B", key: "heartwood",
-            desc: "The densest, strongest part of the tree — the part that holds everything up. Nobody sees it." },
-          { name: "New Moon", sig: "Invisible — but already pulling the tide.",
-            color: "#5B7A7A", key: "newmoon",
-            desc: "Something is shifting. Not a dramatic change — more like a direction." },
-        ].map((p) => {
-          const isHers = p.key === profile.key;
-          return (
-            <div key={p.key} style={{
-              padding: "16px 20px",
-              marginBottom: 8,
-              background: isHers ? "rgba(196,137,106,0.06)" : "transparent",
-              border: isHers ? `1px solid ${T.accentSoft}` : `1px solid ${T.border}`,
-              borderRadius: 3,
-            }}>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 4 }}>
-                <span style={{ fontFamily: T.fonts.display, fontSize: 20, fontWeight: 300,
-                  color: isHers ? p.color : T.text }}>{p.name}</span>
-                {isHers && <span style={{ fontFamily: T.fonts.body, fontSize: 11, color: T.accent,
-                  fontStyle: "italic" }}>← you</span>}
-              </div>
-              <p style={{ fontFamily: T.fonts.body, fontSize: 13.5, color: isHers ? "rgba(240,232,220,0.75)" : T.textDim,
-                fontStyle: "italic", marginBottom: 6 }}>{p.sig}</p>
-              <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.textMuted,
-                lineHeight: 1.7 }}>{p.desc}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* ── Divider (Riva) ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "8px 0 40px" }}>
-        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${T.border})` }} />
-        <div style={{ width: 4, height: 4, background: T.accent, transform: "rotate(45deg)", opacity: 0.3 }} />
-        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.border}, transparent)` }} />
-      </div>
-
-      {/* ── CTA: Full Profile ── */}
+      {/* ── CTA: Full Profile (MOVED UP — right after secondary) ── */}
       <div style={{ background: T.accentGlow, border: `1px solid ${T.accentSoft}`,
         padding: "32px 24px", textAlign: "center", marginBottom: 20 }}>
         <p style={{ fontFamily: T.fonts.display, fontSize: 24, fontWeight: 300,
@@ -953,26 +902,54 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           marginTop: 14 }}>Founding price · Instant PDF · 12 minutes</p>
       </div>
 
-      {/* ── Divider with diamond (Riva) ── */}
+      {/* ── Divider ── */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "32px 0" }}>
         <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${T.border})` }} />
         <div style={{ width: 4, height: 4, background: T.accent, transform: "rotate(45deg)", opacity: 0.4 }} />
         <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.border}, transparent)` }} />
       </div>
 
-      {/* ── Monograph ── */}
-      <div style={{ textAlign: "center", marginBottom: 32 }}>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.textMuted,
-          fontStyle: "italic", lineHeight: 1.7, marginBottom: 8 }}>
-          Want to understand the science behind your results?</p>
-        <a href="https://heyzine.com/flip-book/f7fb8e8fc5.html" target="_blank" rel="noopener noreferrer" style={{ fontFamily: T.fonts.body, fontSize: 14,
-          color: T.accent, letterSpacing: "0.04em", textDecoration: "underline",
-          textUnderlineOffset: 4, cursor: "pointer" }}>
-          Read the ELIA monograph</a>
+      {/* ── The Six ANSR Profiles (COLLAPSED — one line each) ── */}
+      <div style={{ marginBottom: 40 }}>
+        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
+          letterSpacing: "0.12em", marginBottom: 16 }}>
+          The Six ANSR Profiles</p>
+
+        {[
+          { name: "Sunfire", sig: "Burning bright — and burning through.", color: "#D4845A", key: "sunfire" },
+          { name: "Velvet Blade", sig: "Elegant and dangerous. The danger is to yourself.", color: "#9B7A8F", key: "velvetblade" },
+          { name: "Eclipse", sig: "The light didn't leave. Something moved in front of it.", color: "#6B7A8B", key: "eclipse" },
+          { name: "Summer Storm", sig: "You feel everything. That's not the problem.", color: "#8B6B5C", key: "summerstorm" },
+          { name: "Heartwood", sig: "The one who holds everything up. The one nobody thinks to check on.", color: "#7A8B5B", key: "heartwood" },
+          { name: "New Moon", sig: "Invisible — but already pulling the tide.", color: "#5B7A7A", key: "newmoon" },
+        ].map((p) => {
+          const isHers = p.key === profile.key;
+          return (
+            <div key={p.key} style={{
+              padding: "10px 16px",
+              marginBottom: 4,
+              background: isHers ? "rgba(196,137,106,0.06)" : "transparent",
+              border: isHers ? `1px solid ${T.accentSoft}` : `1px solid transparent`,
+              borderRadius: 3,
+              display: "flex",
+              alignItems: "baseline",
+              gap: 10,
+              flexWrap: "wrap",
+            }}>
+              <span style={{ fontFamily: T.fonts.display, fontSize: 17, fontWeight: 300,
+                color: isHers ? p.color : T.textMuted }}>{p.name}</span>
+              {isHers && <span style={{ fontFamily: T.fonts.body, fontSize: 10, color: T.accent,
+                fontStyle: "italic" }}>← you</span>}
+              <span style={{ fontFamily: T.fonts.body, fontSize: 12.5,
+                color: isHers ? "rgba(240,232,220,0.6)" : T.textDim,
+                fontStyle: "italic" }}>{p.sig}</span>
+            </div>
+          );
+        })}
       </div>
 
-      {/* ── Share (CX: one woman to another) ── */}
-      <div style={{ textAlign: "center", marginBottom: 48 }}>
+      {/* ── Share ── */}
+      <div style={{ textAlign: "center", marginBottom: 20 }}>
         <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.textMuted,
           fontStyle: "italic", marginBottom: 12, lineHeight: 1.7 }}>
           Know someone who needs this?</p>
@@ -985,6 +962,14 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           onMouseLeave={(e) => { e.target.style.borderColor = T.accentSoft; }}>
           Copy link to send her
         </button>
+      </div>
+
+      {/* ── Monograph (MOVED below share, dimmed) ── */}
+      <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <a href="https://heyzine.com/flip-book/f7fb8e8fc5.html" target="_blank" rel="noopener noreferrer" style={{ fontFamily: T.fonts.body, fontSize: 12,
+          color: T.textDim, letterSpacing: "0.04em", textDecoration: "underline",
+          textUnderlineOffset: 4, cursor: "pointer" }}>
+          Read the science behind your results</a>
       </div>
 
       {/* ── Footer ── */}
@@ -1003,7 +988,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         </p>
       </div>
 
-      {/* ── Sticky CTA (UX: visible on scroll, doubles conversion) ── */}
+      {/* ── Sticky CTA ── */}
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0,
         background: "linear-gradient(transparent, rgba(26,23,20,0.95) 30%)",
         padding: "24px 16px 16px", textAlign: "center", zIndex: 10 }}>
@@ -1018,13 +1003,11 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         </a>
       </div>
 
-      {/* Bottom padding for sticky CTA */}
       <div style={{ height: 60 }} />
     </div>
   );
 }
 
-// ── Settle Screen (after Begin, before questions) ──
 function SettleScreen({ onReady }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { setTimeout(() => setVis(true), 300); }, []);
@@ -1052,7 +1035,6 @@ function SettleScreen({ onReady }) {
   );
 }
 
-// ── Breathing Transition (CX + Aman) ──
 function BreathingScreen({ onComplete }) {
   const [vis, setVis] = useState(false);
   const [pulse, setPulse] = useState(false);
@@ -1125,10 +1107,8 @@ export default function ANSRPulse() {
       const sec = getSecondaryProfile(s, primary.key);
       setSecondary(sec);
 
-      // Encode results into URL so email can link back
       const resultsUrl = window.location.origin + window.location.pathname;
 
-      // Fully automated: saves to Google Sheet + sends email with results
       fetch("/api/capture", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1144,8 +1124,7 @@ export default function ANSRPulse() {
     } catch (err) {
       console.error("Scoring error:", err);
     }
-    // Fire Meta Pixel Lead event
-    if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: primary ? primary.name : 'Unknown' });
+    if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: profile ? profile.name : 'Unknown' });
     setScreen("results");
     window.scrollTo(0, 0);
   }, [answers]);
@@ -1154,13 +1133,11 @@ export default function ANSRPulse() {
     <div style={{ background: T.bg, minHeight: "100vh", color: T.text, position: "relative" }}>
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
 
-      {/* Noise texture overlay (Riva: materiality) */}
       <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none",
         opacity: 0.025, zIndex: 0,
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
         backgroundSize: "200px 200px" }} />
 
-      {/* Subtle ambient glow */}
       <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none",
         background: "radial-gradient(ellipse at 30% 40%, rgba(196,137,106,0.04) 0%, transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(91,122,122,0.03) 0%, transparent 50%)", zIndex: 0 }} />
 
