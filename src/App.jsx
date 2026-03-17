@@ -11,6 +11,7 @@ const T = {
   bgCard: "rgba(255,255,255,0.03)",
   bgCardHover: "rgba(255,255,255,0.06)",
   accent: "#C4896A",          // Rose Gold
+  accentBright: "#D4976F",    // Rose Gold — brighter for CTA buttons
   accentSoft: "rgba(196,137,106,0.18)",
   accentGlow: "rgba(196,137,106,0.08)",
   text: "#F0E8DC",            // Ivory
@@ -87,7 +88,7 @@ const INSIGHTS = {
   },
 };
 
-// ── Practices (one per dimension, for lowest score) ──
+// ── Practices (kept in data for paid Profile / email use, NOT shown on free results) ──
 const PROFILE_PRACTICES = {
   sunfire: {
     title: "The Deceleration",
@@ -115,7 +116,7 @@ const PROFILE_PRACTICES = {
   },
 };
 
-// ── Questions (answer positions randomized to prevent pattern-answering) ──
+// ── Questions ──
 const QUESTIONS = [
   {
     dim: "alertness",
@@ -243,7 +244,7 @@ function calcScores(answers) {
   });
   const scores = {};
   DIMENSIONS.forEach((d) => {
-    const maxPossible = questionCount[d.key] * 3; // 3 is max per question (V=3)
+    const maxPossible = questionCount[d.key] * 3;
     scores[d.key] = maxPossible > 0 ? Math.round((raw[d.key] / maxPossible) * 100) / 10 : 5;
   });
   return scores;
@@ -266,7 +267,7 @@ const PROFILES = {
     tagline: "Elegant and dangerous. The danger is to yourself.",
     description: "You've built something remarkable: a version of you that is composed, graceful under pressure, impeccable in every visible way. People admire your control. They trust your steadiness. They have no idea what it costs.\n\nBecause the elegance became the armour. The composure became the cage. Somewhere along the way, the polished exterior stopped being a choice and became the only version of you that exists.\n\nThe softness underneath — the sensitivity, the depth, the woman who used to feel things fully — she's still there. But she's behind glass.\n\nBeauty surrounds you — you may even curate it. Your taste is precise. But it's intellectual, not embodied. You're surrounded by beautiful things and feel almost none of them.",
     secondaryHint: "There's a Velvet Blade quality beneath your primary pattern — a part of you that controls, composes, and manages how much you let the world see. Elegant and protective, but quietly isolating.",
-    hope: "I want you to hear something that nobody in your world says to you because you look like you don't need it: you are allowed to be soft. The composure that everyone admires is real — but so is the woman underneath it. She's not weak. She's the strongest part of you. And when she's finally safe enough to come forward, everything changes. Not your competence — that stays. What changes is the depth. The pleasure. The feeling of being alive inside the life you built, not just performing it beautifully. That version of you isn't far away. She's one layer down.",
+    hope: "Nobody in your world says this to you because you look like you don't need it: the composure is real — but so is the woman underneath it. She's not weak. She's the strongest part of you. And when she's finally safe enough to come forward, everything changes. Not your competence — that stays. What changes is the depth. The pleasure. The feeling of being alive inside the life you built, not just performing it beautifully. That version of you isn't far away. She's one layer down.",
     color: "#9B7A8F",
   },
   eclipse: {
@@ -304,7 +305,7 @@ const PROFILES = {
     description: "Something shifted in you — maybe recently, maybe it's been building. You can feel it. Not a dramatic change. More like a direction. A quiet knowing that the way you've been living isn't the way you want to keep living.\n\nYou're not healed. You're not \"there.\" But you're aware in a way you weren't before. You've started asking questions you'd stopped asking: what do I want? Who am I outside of what I do?\n\nThere's a flicker in your sensitivity — beauty reached you recently, or you noticed its absence for the first time. Something is thawing.\n\nA new moon is invisible — but its gravitational pull is the strongest of the cycle. Everything is already moving, even if you can't see it yet.",
     descriptionHigh: "Your results are rare. Genuinely rare.\n\nMcKinsey data shows that 61% of women in management and executive positions report operating under sustained pressure that compromises their health and relationships. Most of your peers are operating in survival mode — bracing, pushing, performing, depleting. You're not. Your nervous system shows genuine regulatory capacity across multiple dimensions.\n\nThat doesn't mean everything is perfect. But it means something important: your system can mobilise for challenge and return to baseline. You can feel beauty — not just recognise it. You have access to rest that actually restores. Your relationships have depth, not just function.\n\nThis is not luck. You've either done real work on yourself, or you have an innate capacity that most people never access. Either way — protect it. What you have is the foundation for everything ANSR builds on.",
     secondaryHint: "There's a New Moon quality beneath your primary pattern — a stirring. Something in you is beginning to shift, to question, to want more. That awareness is the first light.",
-    hope: "You are at the beginning of something and you can feel it. That feeling — that restless, tender, uncertain stirring — is not confusion. It's your nervous system waking up. It's your body remembering that there's more available to you than what you've been settling for. Most people never get here. They stay inside the pattern forever. You stopped. You listened. You let a question in. That takes more courage than any boardroom performance, any deadline met, any crisis survived. The path back to yourself isn't long. It's already started. You're on it right now.",
+    hope: "You are at the beginning of something and you can feel it. That feeling — that restless, tender, uncertain stirring — is not confusion. It's your nervous system waking up. It's your body remembering that there's more available to you than what you've been settling for. Most people never get here. They stayed inside the pattern forever. You stopped. You listened. You let a question in. That takes more courage than any boardroom performance, any deadline met, any crisis survived. The path back to yourself isn't long. It's already started. You're on it right now.",
     hopeHigh: "I want you to hear this clearly: what you have is not normal. Not among the women I work with. Not among the leaders I've sat across from for the past decade. Most of them are magnificent and depleted. You're magnificent and present. That's a different thing entirely.\n\nYour opportunity isn't recovery. It's mastery. You have the nervous system foundation to access states of creative flow, strategic clarity, and relational depth that most leaders never touch. The question now is: are you deliberately cultivating this capacity, or is it something you've maintained by instinct? Because instinct alone won't hold it as the pressure increases. Beauty — as a deliberate, structured practice — is what turns innate capacity into sustainable leadership.",
     color: "#5B7A7A",
   },
@@ -415,8 +416,8 @@ function getSecondaryProfile(scores, primaryKey) {
   return PROFILES[sorted[0][0]];
 }
 
-// ── Radar Chart ──
-function RadarChart({ scores, size = 260, profileColor, secondaryColor }) {
+// ── Radar Chart (scores visible as dots, no number labels) ──
+function RadarChart({ scores, size = 260, profileColor }) {
   const cx = size / 2;
   const cy = size / 2;
   const r = size * 0.36;
@@ -430,10 +431,6 @@ function RadarChart({ scores, size = 260, profileColor, secondaryColor }) {
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ overflow: "visible" }}>
-      {secondaryColor && (
-        <circle cx={cx} cy={cy} r={r + 6} fill="none"
-          stroke="rgba(240,232,220,0.2)" strokeWidth={1} strokeDasharray="4 8" />
-      )}
       {[2.5, 5, 7.5, 10].map((level) => {
         const pts = Array.from({ length: 6 }, (_, i) => getPoint(i, level));
         return (
@@ -654,6 +651,11 @@ function EmailScreen({ onSubmit }) {
   );
 }
 
+// ══════════════════════════════════════════════════════════════
+// RESULTS SCREEN — Restructured for conversion (Expert Panel v2)
+// Flow: Description (2p) → Hope (3 sent) → CTA → Divider → Radar + Dims → Secondary (1 line) → Profiles
+// ══════════════════════════════════════════════════════════════
+
 function ResultsScreen({ scores, profile, secondary, userName }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { setTimeout(() => setVis(true), 300); }, []);
@@ -665,12 +667,10 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
     insight: INSIGHTS[d.key][getBand(scores[d.key]).label],
   }));
 
-  // Sort dimensions by score descending — top 3 get full display, bottom 3 dimmed
   const dimsSorted = [...dims].sort((a, b) => b.score - a.score);
   const topDims = dimsSorted.slice(0, 3);
   const bottomDims = dimsSorted.slice(3);
 
-  const profilePractice = PROFILE_PRACTICES[profile.key];
   const avg = dims.reduce((s, d) => s + d.score, 0) / dims.length;
   const isHighScorer = profile.key === "newmoon" && avg >= 7.5;
 
@@ -678,18 +678,23 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
   const displayDescription = isHighScorer && profile.descriptionHigh ? profile.descriptionHigh : profile.description;
   const displayHope = isHighScorer && profile.hopeHigh ? profile.hopeHigh : profile.hope;
 
-  const descParagraphs = displayDescription.split("\n\n");
+  // Shorten description to first 2 paragraphs
+  const descParagraphs = displayDescription.split("\n\n").slice(0, 2);
 
-  // Shorten practice to first 3 sentences
-  const practiceSentences = profilePractice.practice.split('. ');
-  const shortPractice = practiceSentences.slice(0, 3).join('. ') + (practiceSentences.length > 3 ? '.' : '');
+  // Shorten hope to first 3 sentences
+  const hopeSentences = displayHope.split('. ');
+  const shortHope = hopeSentences.slice(0, 3).join('. ') + (hopeSentences.length > 3 ? '.' : '');
+
+  // CTA URL
+  const ctaUrl = "https://beauty.eliaheals.com/elia-ansr-profile";
+  const ctaText = "See what's ready to shift — €97";
 
   return (
     <div style={{ opacity: vis ? 1 : 0, transition: "opacity 1s ease",
       padding: "48px 24px 80px", maxWidth: 580, margin: "0 auto" }}>
 
-      {/* ── Type ── */}
-      <div style={{ textAlign: "center", marginBottom: 48 }}>
+      {/* ══ SCREEN 1: Profile name + tagline + description (2 paragraphs) ══ */}
+      <div style={{ textAlign: "center", marginBottom: 32 }}>
         <p style={{ fontFamily: T.fonts.display, fontSize: 28, fontWeight: 400, color: T.text,
           letterSpacing: "0.3em", marginBottom: 24 }}>ELIA</p>
 
@@ -711,40 +716,63 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
               lineHeight: 1.85, marginBottom: 16 }}>{p}</p>
           ))}
         </div>
-
-        {/* ── Hope ── */}
-        <div style={{ marginTop: 24, borderLeft: `2px solid ${profile.color}`,
-          paddingLeft: 20, textAlign: "left" }}>
-          <p style={{ fontFamily: T.fonts.body, fontSize: 16, color: T.text,
-            lineHeight: 1.9, fontStyle: "italic" }}>
-            {displayHope}</p>
-        </div>
       </div>
 
-      {/* ── McKinsey Context ── */}
-      {!isHighScorer && (
-        <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.text,
-          lineHeight: 1.8, textAlign: "center", margin: "32px auto 8px",
-          maxWidth: 440, fontWeight: 600 }}>
-          According to McKinsey, 61% of women in management and executive positions
-          report operating under sustained pressure that affects their health, their
-          relationships, and their capacity to feel. You are not alone in this. But you
-          don't have to stay in it.</p>
-      )}
+      {/* ══ SCREEN 2: Hope quote (3 sentences only) ══ */}
+      <div style={{ marginBottom: 36, borderLeft: `2px solid ${profile.color}`,
+        paddingLeft: 20 }}>
+        <p style={{ fontFamily: T.fonts.body, fontSize: 16, color: T.text,
+          lineHeight: 1.9, fontStyle: "italic" }}>
+          {shortHope}</p>
+      </div>
 
-      {/* ── Divider ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "8px 0 40px" }}>
+      {/* ══ SCREEN 3: CTA — immediately after hope (emotional peak) ══ */}
+      <div style={{ background: T.accentGlow, border: `1px solid ${T.accentSoft}`,
+        padding: "32px 24px", textAlign: "center", marginBottom: 8 }}>
+        <p style={{ fontFamily: T.fonts.display, fontSize: 22, fontWeight: 300,
+          color: T.text, marginBottom: 8 }}>Your Pulse named the pattern.</p>
+        <p style={{ fontFamily: T.fonts.display, fontSize: 22, fontWeight: 300,
+          color: T.accent, marginBottom: 24 }}>Your Profile maps what's ready to shift.</p>
+        <a href={ctaUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontFamily: T.fonts.display,
+          fontSize: 15, letterSpacing: "0.12em", textTransform: "uppercase", background: T.accentBright,
+          color: T.bg, padding: "15px 36px", textDecoration: "none", cursor: "pointer",
+          transition: "all 0.3s ease", borderRadius: 2, opacity: 0.95 }}
+          onMouseEnter={(e) => { e.target.style.opacity = "1"; }}
+          onMouseLeave={(e) => { e.target.style.opacity = "0.95"; }}>
+          {ctaText}
+        </a>
+        <p style={{ fontFamily: T.fonts.body, fontSize: 10.5, color: T.textDim,
+          marginTop: 14 }}>Founding price · Instant PDF · 12 minutes</p>
+      </div>
+
+      {/* ── Social proof ── */}
+      <p style={{ fontFamily: T.fonts.body, fontSize: 11, color: T.textDim,
+        textAlign: "center", marginBottom: 40, letterSpacing: "0.04em" }}>
+        Taken by 150+ senior leaders in luxury, finance, and design.</p>
+
+      {/* ══ SINGLE DIVIDER — between emotional section and analytical section ══ */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "0 0 40px" }}>
         <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${T.border})` }} />
         <div style={{ width: 4, height: 4, background: T.accent, transform: "rotate(45deg)", opacity: 0.3 }} />
         <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.border}, transparent)` }} />
       </div>
+
+      {/* ══ SCREEN 4: McKinsey context (below CTA — analytical zone) ══ */}
+      {!isHighScorer && (
+        <p style={{ fontFamily: T.fonts.body, fontSize: 14, color: T.textMuted,
+          lineHeight: 1.8, textAlign: "center", margin: "0 auto 32px",
+          maxWidth: 440 }}>
+          According to McKinsey, 61% of women in management and executive positions
+          report operating under sustained pressure that affects their health, their
+          relationships, and their capacity to feel.</p>
+      )}
 
       {/* ── Radar Chart ── */}
       <div style={{ textAlign: "center", marginBottom: 40 }}>
         <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
           letterSpacing: "0.12em", marginBottom: 24 }}>
           Your ANSR Map — {userName}</p>
-        <RadarChart scores={scores} profileColor={profile.color} secondaryColor={T.kleinLight} />
+        <RadarChart scores={scores} profileColor={profile.color} />
         <div style={{ marginTop: 24, display: "flex", justifyContent: "center",
           alignItems: "center", gap: 24, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -803,8 +831,8 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         ))}
       </div>
 
-      {/* ── Dimension Scores — BOTTOM 3 (dimmed, bar + score only) ── */}
-      <div style={{ marginBottom: 16, opacity: 0.35 }}>
+      {/* ── Dimension Scores — BOTTOM 3 (dimmed at 0.45, with "Explored in your full Profile") ── */}
+      <div style={{ marginBottom: 32, opacity: 0.45 }}>
         {bottomDims.map((d) => (
           <div key={d.key} style={{ marginBottom: 14, paddingBottom: 14,
             borderBottom: `1px solid ${T.border}` }}>
@@ -817,99 +845,37 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
                 color: T.textDim }}>{d.score}/10</span>
             </div>
             <div style={{ width: "100%", height: 4, background: "rgba(255,255,255,0.05)",
-              borderRadius: 2 }}>
+              borderRadius: 2, marginBottom: 6 }}>
               <div style={{ width: `${Math.max(d.score * 10, 5)}%`, height: "100%",
                 background: `linear-gradient(90deg, ${d.band.color}88, ${d.band.color})`,
                 borderRadius: 2, transition: "width 1.2s ease" }} />
             </div>
+            <p style={{ fontFamily: T.fonts.body, fontSize: 11.5, color: T.textDim,
+              fontStyle: "italic" }}>Explored in your full Profile</p>
           </div>
         ))}
       </div>
 
-      {/* ── Upsell hint after dimmed dimensions ── */}
-      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.accent,
-        fontStyle: "italic", marginBottom: 40, lineHeight: 1.6 }}>
-        Full analysis of all 6 dimensions in your ANSR Profile →</p>
-
-      {/* ── Practice (shortened to 3 sentences) ── */}
-      <div style={{ background: T.accentGlow, border: `1px solid ${T.accentSoft}`,
-        padding: "24px 24px", marginBottom: 12 }}>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
-          letterSpacing: "0.12em", marginBottom: 4 }}>
-          Your First Practice</p>
-        <p style={{ fontFamily: T.fonts.display, fontSize: 20, fontWeight: 300,
-          color: T.text, marginBottom: 14 }}>
-          {profilePractice.title}</p>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.text,
-          lineHeight: 1.8 }}>{shortPractice}</p>
-      </div>
-
-      {/* ── Practice upsell hint ── */}
-      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.accent,
-        fontStyle: "italic", marginBottom: 40, lineHeight: 1.6 }}>
-        Your full Profile includes 3 practices matched to your {profile.name}–{secondary ? secondary.name : ""} combination.</p>
-
-      {/* ── Secondary Profile ── */}
+      {/* ══ SCREEN 5: Secondary profile — ONE sentence only ══ */}
       {secondary && (
-        <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${T.border}`,
-          padding: "28px 24px", marginBottom: 40 }}>
-          <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
-            letterSpacing: "0.12em", marginBottom: 16 }}>
-            Your Secondary Pattern</p>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14 }}>
-            <span style={{ fontFamily: T.fonts.display, fontSize: 24, fontWeight: 300,
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 8 }}>
+            <span style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
+              letterSpacing: "0.12em" }}>Your Secondary Pattern</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
+            <span style={{ fontFamily: T.fonts.display, fontSize: 22, fontWeight: 300,
               color: T.text }}>{secondary.name}</span>
-            <span style={{ fontFamily: T.fonts.body, fontSize: 14, color: T.textMuted,
+            <span style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.textMuted,
               fontStyle: "italic" }}>undertone</span>
           </div>
-          <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.textMuted,
-            lineHeight: 1.8, marginBottom: 16 }}>
-            {secondary.secondaryHint}</p>
-          <div style={{ background: "rgba(255,255,255,0.03)", padding: "16px 20px",
-            borderLeft: `2px solid ${T.textDim}` }}>
-            <p style={{ fontFamily: T.fonts.ui, fontSize: 12.5, color: T.textDim,
-              lineHeight: 1.7 }}>
-              How your <span style={{ color: profile.color }}>{profile.name}</span> and{" "}
-              <span style={{ color: secondary.color }}>{secondary.name}</span> patterns interact
-              — and what that specific combination means for your nervous system, your leadership,
-              and your way back — is explored in depth in your full ANSR Profile.</p>
-          </div>
+          <p style={{ fontFamily: T.fonts.body, fontSize: 14, color: T.textMuted,
+            lineHeight: 1.7 }}>
+            How your {profile.name} and {secondary.name} interact — and what that means for you — is in your full ANSR Profile.</p>
         </div>
       )}
 
-      {/* ── CTA: Full Profile (MOVED UP — right after secondary) ── */}
-      <div style={{ background: T.accentGlow, border: `1px solid ${T.accentSoft}`,
-        padding: "32px 24px", textAlign: "center", marginBottom: 20 }}>
-        <p style={{ fontFamily: T.fonts.display, fontSize: 24, fontWeight: 300,
-          color: T.text, marginBottom: 10 }}>Your Pulse shows the shape.</p>
-        <p style={{ fontFamily: T.fonts.display, fontSize: 24, fontWeight: 300,
-          color: T.accent, marginBottom: 20 }}>Your full <span style={{ letterSpacing: "0.05em" }}>ANSR</span> Profile tells the story.</p>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 14, color: T.textMuted,
-          lineHeight: 1.7, marginBottom: 24, maxWidth: 400, margin: "0 auto 24px" }}>
-          42 questions. 6 dimensions mapped in depth. Your complete{" "}
-          <span style={{ color: profile.color }}>{profile.name}</span>–<span style={{ color: secondary ? secondary.color : T.textMuted }}>{secondary ? secondary.name : ""}</span>{" "}
-          dual-profile analysis. Sensory regulation mapping.
-          Practices matched to your nervous system. A PDF report — yours to keep.</p>
-        <a href="https://beauty.eliaheals.com/elia-ansr-profile" target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontFamily: T.fonts.display,
-          fontSize: 15, letterSpacing: "0.15em", textTransform: "uppercase", background: T.accent,
-          color: T.bg, padding: "15px 36px", textDecoration: "none", cursor: "pointer",
-          transition: "all 0.3s ease", borderRadius: 2, opacity: 0.9 }}
-          onMouseEnter={(e) => { e.target.style.opacity = "1"; }}
-          onMouseLeave={(e) => { e.target.style.opacity = "0.9"; }}>
-          Get Your Full ANSR Profile — €97
-        </a>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 10.5, color: T.textDim,
-          marginTop: 14 }}>Founding price · Instant PDF · 12 minutes</p>
-      </div>
-
-      {/* ── Divider ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "32px 0" }}>
-        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${T.border})` }} />
-        <div style={{ width: 4, height: 4, background: T.accent, transform: "rotate(45deg)", opacity: 0.4 }} />
-        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.border}, transparent)` }} />
-      </div>
-
-      {/* ── The Six ANSR Profiles (COLLAPSED — one line each) ── */}
+      {/* ══ SCREEN 6: Six Profiles (compact) + Share + Footer ══ */}
       <div style={{ marginBottom: 40 }}>
         <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
           letterSpacing: "0.12em", marginBottom: 16 }}>
@@ -949,7 +915,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
       </div>
 
       {/* ── Share ── */}
-      <div style={{ textAlign: "center", marginBottom: 20 }}>
+      <div style={{ textAlign: "center", marginBottom: 32 }}>
         <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.textMuted,
           fontStyle: "italic", marginBottom: 12, lineHeight: 1.7 }}>
           Know someone who needs this?</p>
@@ -962,14 +928,6 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           onMouseLeave={(e) => { e.target.style.borderColor = T.accentSoft; }}>
           Copy link to send her
         </button>
-      </div>
-
-      {/* ── Monograph (MOVED below share, dimmed) ── */}
-      <div style={{ textAlign: "center", marginBottom: 48 }}>
-        <a href="https://heyzine.com/flip-book/f7fb8e8fc5.html" target="_blank" rel="noopener noreferrer" style={{ fontFamily: T.fonts.body, fontSize: 12,
-          color: T.textDim, letterSpacing: "0.04em", textDecoration: "underline",
-          textUnderlineOffset: 4, cursor: "pointer" }}>
-          Read the science behind your results</a>
       </div>
 
       {/* ── Footer ── */}
@@ -988,18 +946,18 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         </p>
       </div>
 
-      {/* ── Sticky CTA ── */}
+      {/* ── Sticky CTA (consistent text) ── */}
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0,
         background: "linear-gradient(transparent, rgba(26,23,20,0.95) 30%)",
         padding: "24px 16px 16px", textAlign: "center", zIndex: 10 }}>
-        <a href="https://beauty.eliaheals.com/elia-ansr-profile" target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontFamily: T.fonts.ui,
+        <a href={ctaUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontFamily: T.fonts.ui,
           fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase",
-          background: T.accent, color: T.bg, padding: "12px 28px",
+          background: T.accentBright, color: T.bg, padding: "12px 28px",
           textDecoration: "none", cursor: "pointer", borderRadius: 2,
           transition: "all 0.3s ease", opacity: 0.95 }}
           onMouseEnter={(e) => { e.target.style.opacity = "1"; }}
           onMouseLeave={(e) => { e.target.style.opacity = "0.95"; }}>
-          Get Your Full Profile — €97
+          {ctaText}
         </a>
       </div>
 
