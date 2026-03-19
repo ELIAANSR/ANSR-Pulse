@@ -646,6 +646,8 @@ function EmailScreen({ onSubmit }) {
 
         <p style={{ fontFamily: T.fonts.body, fontSize: 11, color: "rgba(58,53,48,0.4)",
           marginTop: 20 }}>Your data is confidential. We don't share it. Ever.</p>
+        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: "rgba(58,53,48,0.7)",
+          marginTop: 12 }}>Your results will also be sent to your inbox. Check your promotions folder if needed.</p>
       </div>
     </div>
   );
@@ -996,11 +998,9 @@ function SettleScreen({ onReady }) {
 function BreathingScreen({ onComplete }) {
   const [vis, setVis] = useState(false);
   const [pulse, setPulse] = useState(false);
-  const [showInbox, setShowInbox] = useState(false);
   useEffect(() => {
     setTimeout(() => setVis(true), 200);
     setTimeout(() => setPulse(true), 600);
-    setTimeout(() => setShowInbox(true), 2500);
     setTimeout(() => onComplete(), 5500);
   }, [onComplete]);
 
@@ -1043,11 +1043,6 @@ function BreathingScreen({ onComplete }) {
         marginTop: 40, fontStyle: "italic", opacity: vis ? 0.7 : 0,
         transition: "opacity 1.5s ease 0.8s" }}>
         Your results are being prepared</p>
-
-      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.textMuted,
-        marginTop: 16, fontStyle: "italic", opacity: showInbox ? 0.85 : 0,
-        transition: "opacity 1.2s ease", letterSpacing: "0.02em" }}>
-        We've sent them to your inbox too — check promotions if needed</p>
     </div>
   );
 }
