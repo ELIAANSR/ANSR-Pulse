@@ -485,7 +485,7 @@ function Fade({ children, dep }) {
 
 function IntroScreen({ onStart }) {
   const [vis, setVis] = useState(false);
-  useEffect(() => { setTimeout(() => setVis(true), 150); }, []);
+  useEffect(() => { setTimeout(() => setVis(true), 50); }, []);
 
   return (
     <div style={{ opacity: vis ? 1 : 0, transition: "opacity 1.2s ease", textAlign: "center",
@@ -996,16 +996,36 @@ function SettleScreen({ onReady }) {
 function BreathingScreen({ onComplete }) {
   const [vis, setVis] = useState(false);
   const [pulse, setPulse] = useState(false);
+  const [showInbox, setShowInbox] = useState(false);
   useEffect(() => {
     setTimeout(() => setVis(true), 200);
     setTimeout(() => setPulse(true), 600);
-    setTimeout(() => onComplete(), 3800);
+    setTimeout(() => setShowInbox(true), 2500);
+    setTimeout(() => onComplete(), 5500);
   }, [onComplete]);
 
   return (
     <div style={{ opacity: vis ? 1 : 0, transition: "opacity 1s ease",
       display: "flex", flexDirection: "column", alignItems: "center",
       justifyContent: "center", minHeight: "100vh", padding: 24 }}>
+
+      {/* Rose gold ambient glow */}
+      <div style={{
+        position: "absolute", width: 240, height: 240, borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(196,137,106,0.08) 0%, transparent 70%)",
+        pointerEvents: "none",
+      }} />
+
+      {/* Outer ring — faint, slower expansion */}
+      <div style={{
+        position: "absolute",
+        width: pulse ? 160 : 80, height: pulse ? 160 : 80,
+        borderRadius: "50%", border: `1px solid ${T.accent}`,
+        opacity: pulse ? 0.15 : 0.25,
+        transition: "all 3.5s ease-in-out",
+      }} />
+
+      {/* Inner ring — primary pulse */}
       <div style={{
         width: pulse ? 120 : 60, height: pulse ? 120 : 60,
         borderRadius: "50%", border: `1px solid ${T.accent}`,
@@ -1018,10 +1038,16 @@ function BreathingScreen({ onComplete }) {
           color: T.text, letterSpacing: "0.25em", margin: 0, opacity: 0.8,
           position: "absolute" }}>ELIA</p>
       </div>
+
       <p style={{ fontFamily: T.fonts.body, fontSize: 16, color: T.textMuted,
-        marginTop: 32, fontStyle: "italic", opacity: vis ? 0.7 : 0,
+        marginTop: 40, fontStyle: "italic", opacity: vis ? 0.7 : 0,
         transition: "opacity 1.5s ease 0.8s" }}>
         Your results are being prepared</p>
+
+      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.textDim,
+        marginTop: 16, fontStyle: "italic", opacity: showInbox ? 0.6 : 0,
+        transition: "opacity 1.2s ease", letterSpacing: "0.02em" }}>
+        We've sent them to your inbox too — check promotions if needed</p>
     </div>
   );
 }
@@ -1089,6 +1115,8 @@ export default function ANSRPulse() {
 
   return (
     <div style={{ background: T.bg, minHeight: "100vh", color: T.text, position: "relative" }}>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
 
       <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none",
