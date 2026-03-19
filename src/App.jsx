@@ -1044,8 +1044,8 @@ function BreathingScreen({ onComplete }) {
         transition: "opacity 1.5s ease 0.8s" }}>
         Your results are being prepared</p>
 
-      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.textDim,
-        marginTop: 16, fontStyle: "italic", opacity: showInbox ? 0.6 : 0,
+      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.textMuted,
+        marginTop: 16, fontStyle: "italic", opacity: showInbox ? 0.85 : 0,
         transition: "opacity 1.2s ease", letterSpacing: "0.02em" }}>
         We've sent them to your inbox too — check promotions if needed</p>
     </div>
