@@ -435,32 +435,32 @@ function RadarChart({ scores, size = 260, profileColor }) {
         const pts = Array.from({ length: 6 }, (_, i) => getPoint(i, level));
         return (
           <polygon key={level} points={pts.map((p) => `${p.x},${p.y}`).join(" ")}
-            fill="none" stroke={level === 10 ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)"}
-            strokeWidth={level === 10 ? 1 : 0.5} />
+            fill="none" stroke={level === 10 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.09)"}
+            strokeWidth={level === 10 ? 1.2 : 0.6} />
         );
       })}
       {Array.from({ length: 6 }, (_, i) => {
         const end = getPoint(i, 10);
-        return <line key={i} x1={cx} y1={cy} x2={end.x} y2={end.y} stroke="rgba(255,255,255,0.04)" strokeWidth={0.5} />;
+        return <line key={i} x1={cx} y1={cy} x2={end.x} y2={end.y} stroke="rgba(255,255,255,0.09)" strokeWidth={0.6} />;
       })}
       <polygon
         points={dimKeys.map((k, i) => { const p = getPoint(i, Math.max(scores[k], 1.2)); return `${p.x},${p.y}`; }).join(" ")}
-        fill={`${profileColor}18`} stroke={profileColor} strokeWidth={2}
+        fill={`${profileColor}28`} stroke={profileColor} strokeWidth={2.5}
       />
       {dimKeys.map((k, i) => {
         const p = getPoint(i, Math.max(scores[k], 1.2));
-        return <circle key={k} cx={p.x} cy={p.y} r={3.5} fill={profileColor} />;
+        return <circle key={k} cx={p.x} cy={p.y} r={4.5} fill={profileColor} />;
       })}
       {DIMENSIONS.map((d, i) => {
         const p = getPoint(i, 12.5);
         return (
           <text key={d.key} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle"
-            style={{ fontSize: 10, fontFamily: T.fonts.ui, fill: T.textMuted, letterSpacing: "0.06em" }}>
+            style={{ fontSize: 11, fontFamily: T.fonts.ui, fill: T.text, letterSpacing: "0.06em" }}>
             {d.label}
           </text>
         );
       })}
-      <circle cx={cx} cy={cy} r={2.5} fill={profileColor} opacity={0.6} />
+      <circle cx={cx} cy={cy} r={2.5} fill={profileColor} opacity={0.7} />
     </svg>
   );
 }
