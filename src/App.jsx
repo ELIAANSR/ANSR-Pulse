@@ -14,9 +14,9 @@ const T = {
   accentBright: "#D4976F",    // Rose Gold — brighter for CTA buttons
   accentSoft: "rgba(196,137,106,0.18)",
   accentGlow: "rgba(196,137,106,0.08)",
-  text: "#F0E8DC",            // Ivory
-  textMuted: "#B0A494",       // Warm muted
-  textDim: "#7A7068",         // Dim
+  text: "#F2EDE7",            // Primary — crisp, faint cool undertone
+  textMuted: "#C4BAA8",       // Secondary — readable at 12px
+  textDim: "#C4BAA8",         // Merged with muted — no invisible third tier
   klein: "#4A6FA5",           // Klein Blue — visible, luminous on dark
   kleinLight: "rgba(74,111,165,0.3)", // Klein Blue subtle
   border: "rgba(255,255,255,0.08)",
@@ -455,7 +455,7 @@ function RadarChart({ scores, size = 260, profileColor }) {
         const p = getPoint(i, 12.5);
         return (
           <text key={d.key} x={p.x} y={p.y} textAnchor="middle" dominantBaseline="middle"
-            style={{ fontSize: 9, fontFamily: T.fonts.ui, fill: T.textMuted, letterSpacing: "0.06em" }}>
+            style={{ fontSize: 10, fontFamily: T.fonts.ui, fill: T.textMuted, letterSpacing: "0.06em" }}>
             {d.label}
           </text>
         );
@@ -521,7 +521,7 @@ function IntroScreen({ onStart }) {
         Begin
       </button>
 
-      <p style={{ fontFamily: T.fonts.body, fontSize: 11, color: T.textDim, marginTop: 36,
+      <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim, marginTop: 36,
         letterSpacing: "0.06em" }}>2 minutes · Confidential</p>
     </div>
   );
@@ -554,7 +554,7 @@ function QuestionScreen({ question, index, total, onAnswer, onBack }) {
               {DIMENSIONS.find((d) => d.key === question.dim)?.label}
             </span>
           </div>
-          <span style={{ fontFamily: T.fonts.ui, fontSize: 11, color: T.textDim,
+          <span style={{ fontFamily: T.fonts.ui, fontSize: 12, color: T.textDim,
             letterSpacing: "0.06em" }}>{index + 1} of {total}</span>
         </div>
 
@@ -601,8 +601,8 @@ function EmailScreen({ onSubmit }) {
   useEffect(() => { setTimeout(() => setVis(true), 200); }, []);
 
   const inputStyle = {
-    fontFamily: T.fonts.body, fontSize: 15, background: "rgba(255,255,255,0.6)",
-    border: `1px solid rgba(58,53,48,0.15)`, color: T.warmCharcoal, padding: "15px 16px",
+    fontFamily: T.fonts.body, fontSize: 15, background: "rgba(255,255,255,0.08)",
+    border: `1px solid rgba(196,137,106,0.25)`, color: T.warmWhite, padding: "15px 16px",
     width: "100%", outline: "none", boxSizing: "border-box", borderRadius: 2,
     transition: "border-color 0.3s ease",
   };
@@ -612,13 +612,13 @@ function EmailScreen({ onSubmit }) {
       minHeight: "100vh", padding: "40px 24px" }}>
       <div style={{ opacity: vis ? 1 : 0, transition: "opacity 0.8s ease", textAlign: "center",
         padding: "48px 32px", maxWidth: 420, width: "100%",
-        background: T.warmWhite, borderRadius: 3 }}>
+        background: "rgba(255,255,255,0.04)", border: `1px solid ${T.border}`, borderRadius: 3 }}>
 
         <p style={{ fontFamily: T.fonts.display, fontSize: 24, fontWeight: 300,
-          color: T.warmCharcoal, letterSpacing: "0.04em", marginBottom: 8 }}>
+          color: T.text, letterSpacing: "0.04em", marginBottom: 8 }}>
           Your ANSR <span style={{ color: T.accent }}>Pulse</span> is ready</p>
         <div style={{ width: 30, height: 1, background: T.accent, margin: "0 auto 24px", opacity: 0.5 }} />
-        <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: "rgba(58,53,48,0.65)",
+        <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: T.textMuted,
           fontStyle: "italic", lineHeight: 1.7, marginBottom: 32 }}>
           Enter your name and email to see your results.</p>
 
@@ -626,27 +626,27 @@ function EmailScreen({ onSubmit }) {
           <input type="text" placeholder="Your first name" value={name}
             onChange={(e) => setName(e.target.value)} style={inputStyle}
             onFocus={(e) => (e.target.style.borderColor = T.accent)}
-            onBlur={(e) => (e.target.style.borderColor = "rgba(58,53,48,0.15)")} />
+            onBlur={(e) => (e.target.style.borderColor = "rgba(196,137,106,0.25)")} />
           <input type="email" placeholder="Your email" value={email}
             onChange={(e) => setEmail(e.target.value)} style={inputStyle}
             onFocus={(e) => (e.target.style.borderColor = T.accent)}
-            onBlur={(e) => (e.target.style.borderColor = "rgba(58,53,48,0.15)")} />
+            onBlur={(e) => (e.target.style.borderColor = "rgba(196,137,106,0.25)")} />
         </div>
 
         <button onClick={() => { if (name.trim() && email.trim()) onSubmit(name.trim(), email.trim()); }}
           style={{ fontFamily: T.fonts.display, fontSize: 15, letterSpacing: "0.12em",
-            textTransform: "uppercase", background: T.warmCharcoal, border: "none",
-            color: T.warmWhite, padding: "15px 40px", cursor: "pointer",
+            textTransform: "uppercase", background: T.accent, border: "none",
+            color: "#FFFFFF", padding: "15px 40px", cursor: "pointer",
             transition: "all 0.3s ease", width: "100%",
             opacity: name.trim() && email.trim() ? 1 : 0.35, borderRadius: 2 }}
-          onMouseEnter={(e) => { if (name.trim() && email.trim()) e.target.style.background = "#1A1714"; }}
-          onMouseLeave={(e) => { e.target.style.background = T.warmCharcoal; }}>
+          onMouseEnter={(e) => { if (name.trim() && email.trim()) e.target.style.background = T.accentBright; }}
+          onMouseLeave={(e) => { e.target.style.background = T.accent; }}>
           See My Results
         </button>
 
-        <p style={{ fontFamily: T.fonts.body, fontSize: 11, color: "rgba(58,53,48,0.4)",
+        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim,
           marginTop: 20 }}>Your data is confidential. We don't share it. Ever.</p>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: "rgba(58,53,48,0.7)",
+        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textMuted,
           marginTop: 12 }}>Your results will also be sent to your inbox. Check your promotions folder if needed.</p>
       </div>
     </div>
@@ -689,7 +689,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
 
   // CTA URL
   const ctaUrl = "https://beauty.eliaheals.com/elia-ansr-profile";
-  const ctaText = "See what's ready to shift — €97";
+  const ctaText = "Your full ANSR Profile — €97";
 
   return (
     <div style={{ opacity: vis ? 1 : 0, transition: "opacity 1s ease",
@@ -708,13 +708,13 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           fontWeight: 300, color: T.text, letterSpacing: "0.04em", marginBottom: 14 }}>
           {profile.name}</h1>
 
-        <p style={{ fontFamily: T.fonts.body, fontSize: 18, color: "rgba(240,232,220,0.8)",
+        <p style={{ fontFamily: T.fonts.body, fontSize: 19, color: T.accent,
           fontStyle: "italic", lineHeight: 1.6, marginBottom: 36 }}>
           {displayTagline}</p>
 
         <div style={{ textAlign: "left" }}>
           {descParagraphs.map((p, i) => (
-            <p key={i} style={{ fontFamily: T.fonts.body, fontSize: 16, color: T.textMuted,
+            <p key={i} style={{ fontFamily: T.fonts.body, fontSize: 16, color: T.text,
               lineHeight: 1.85, marginBottom: 16 }}>{p}</p>
           ))}
         </div>
@@ -734,21 +734,22 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         <p style={{ fontFamily: T.fonts.display, fontSize: 22, fontWeight: 300,
           color: T.text, marginBottom: 8 }}>Your Pulse named the pattern.</p>
         <p style={{ fontFamily: T.fonts.display, fontSize: 22, fontWeight: 300,
-          color: T.accent, marginBottom: 24 }}>Your Profile maps what's ready to shift.</p>
+          color: T.accent, marginBottom: 24 }}>Your Profile maps the six dimensions underneath it.</p>
         <a href={ctaUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontFamily: T.fonts.display,
           fontSize: 15, letterSpacing: "0.12em", textTransform: "uppercase", background: T.accentBright,
-          color: T.bg, padding: "15px 36px", textDecoration: "none", cursor: "pointer",
-          transition: "all 0.3s ease", borderRadius: 2, opacity: 0.95 }}
-          onMouseEnter={(e) => { e.target.style.opacity = "1"; }}
-          onMouseLeave={(e) => { e.target.style.opacity = "0.95"; }}>
+          color: "#FFFFFF", padding: "15px 36px", textDecoration: "none", cursor: "pointer",
+          transition: "all 0.3s ease", borderRadius: 2,
+          boxShadow: "0 0 24px rgba(212,151,111,0.18)" }}
+          onMouseEnter={(e) => { e.target.style.boxShadow = "0 0 32px rgba(212,151,111,0.3)"; }}
+          onMouseLeave={(e) => { e.target.style.boxShadow = "0 0 24px rgba(212,151,111,0.18)"; }}>
           {ctaText}
         </a>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 10.5, color: T.textDim,
+        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim,
           marginTop: 14 }}>Founding price · Instant PDF · 12 minutes</p>
       </div>
 
       {/* ── Social proof ── */}
-      <p style={{ fontFamily: T.fonts.body, fontSize: 11, color: T.textDim,
+      <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim,
         textAlign: "center", marginBottom: 40, letterSpacing: "0.04em" }}>
         Taken by 150+ senior leaders in luxury, finance, and design.</p>
 
@@ -783,7 +784,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
             <span style={{ fontFamily: T.fonts.display, fontSize: 16, color: T.text,
               letterSpacing: "0.04em" }}>
               {profile.name}</span>
-            <span style={{ fontFamily: T.fonts.body, fontSize: 11, color: T.textDim,
+            <span style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim,
               fontStyle: "italic", marginLeft: 2 }}>primary</span>
           </div>
           {secondary && (
@@ -793,7 +794,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
               <span style={{ fontFamily: T.fonts.display, fontSize: 16, color: "rgba(240,232,220,0.7)",
                 letterSpacing: "0.04em" }}>
                 {secondary.name}</span>
-              <span style={{ fontFamily: T.fonts.body, fontSize: 11, color: T.textMuted,
+              <span style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textMuted,
                 fontStyle: "italic", marginLeft: 2 }}>undertone</span>
             </div>
           )}
@@ -815,9 +816,9 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
                 letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500 }}>
                 {d.label}</span>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontFamily: T.fonts.ui, fontSize: 11,
+                <span style={{ fontFamily: T.fonts.ui, fontSize: 12,
                   color: d.band.color, letterSpacing: "0.06em" }}>{d.band.label}</span>
-                <span style={{ fontFamily: T.fonts.ui, fontSize: 11,
+                <span style={{ fontFamily: T.fonts.ui, fontSize: 12,
                   color: T.textDim }}>{d.score}/10</span>
               </div>
             </div>
@@ -827,7 +828,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
                 background: `linear-gradient(90deg, ${d.band.color}88, ${d.band.color})`,
                 borderRadius: 2, transition: "width 1.2s ease" }} />
             </div>
-            <p style={{ fontFamily: T.fonts.body, fontSize: 14.5, color: T.textMuted,
+            <p style={{ fontFamily: T.fonts.body, fontSize: 14.5, color: T.text,
               lineHeight: 1.7 }}>{d.insight}</p>
           </div>
         ))}
@@ -843,7 +844,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
               <span style={{ fontFamily: T.fonts.ui, fontSize: 12, color: T.text,
                 letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 500 }}>
                 {d.label}</span>
-              <span style={{ fontFamily: T.fonts.ui, fontSize: 11,
+              <span style={{ fontFamily: T.fonts.ui, fontSize: 12,
                 color: T.textDim }}>{d.score}/10</span>
             </div>
             <div style={{ width: "100%", height: 4, background: "rgba(255,255,255,0.05)",
@@ -852,7 +853,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
                 background: `linear-gradient(90deg, ${d.band.color}88, ${d.band.color})`,
                 borderRadius: 2, transition: "width 1.2s ease" }} />
             </div>
-            <p style={{ fontFamily: T.fonts.body, fontSize: 11.5, color: T.textDim,
+            <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim,
               fontStyle: "italic" }}>Explored in your full Profile</p>
           </div>
         ))}
@@ -906,7 +907,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
             }}>
               <span style={{ fontFamily: T.fonts.display, fontSize: 17, fontWeight: 300,
                 color: isHers ? p.color : T.textMuted }}>{p.name}</span>
-              {isHers && <span style={{ fontFamily: T.fonts.body, fontSize: 10, color: T.accent,
+              {isHers && <span style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.accent,
                 fontStyle: "italic" }}>← you</span>}
               <span style={{ fontFamily: T.fonts.body, fontSize: 12.5,
                 color: isHers ? "rgba(240,232,220,0.6)" : T.textDim,
@@ -932,15 +933,21 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         </button>
       </div>
 
+      {/* ── Credibility ── */}
+      <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim,
+        textAlign: "center", marginBottom: 32, lineHeight: 1.7 }}>
+        Built on peer-reviewed research from Stanford, University College London,
+        the Max Planck Institute, and the Polyvagal Institute.</p>
+
       {/* ── Footer ── */}
       <div style={{ textAlign: "center", paddingTop: 20,
         borderTop: `1px solid ${T.border}` }}>
         <p style={{ fontFamily: T.fonts.display, fontSize: 20, fontWeight: 400,
           color: T.text, letterSpacing: "0.15em", marginBottom: 4 }}>ELIA</p>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 11, color: T.textMuted,
+        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textMuted,
           letterSpacing: "0.1em", marginBottom: 16, fontStyle: "italic" }}>
           Beauty That Heals</p>
-        <p style={{ fontFamily: T.fonts.body, fontSize: 9, color: T.textDim,
+        <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim,
           lineHeight: 1.7 }}>
           ANSR™ — Aesthetic Nervous System Regulation<br />
           © ELIA / Uskale SA · All rights reserved<br />
@@ -954,11 +961,12 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         padding: "24px 16px 16px", textAlign: "center", zIndex: 10 }}>
         <a href={ctaUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-block", fontFamily: T.fonts.ui,
           fontSize: 12, letterSpacing: "0.12em", textTransform: "uppercase",
-          background: T.accentBright, color: T.bg, padding: "12px 28px",
+          background: T.accentBright, color: "#FFFFFF", padding: "12px 28px",
           textDecoration: "none", cursor: "pointer", borderRadius: 2,
-          transition: "all 0.3s ease", opacity: 0.95 }}
-          onMouseEnter={(e) => { e.target.style.opacity = "1"; }}
-          onMouseLeave={(e) => { e.target.style.opacity = "0.95"; }}>
+          transition: "all 0.3s ease",
+          boxShadow: "0 0 20px rgba(212,151,111,0.15)" }}
+          onMouseEnter={(e) => { e.target.style.boxShadow = "0 0 28px rgba(212,151,111,0.25)"; }}
+          onMouseLeave={(e) => { e.target.style.boxShadow = "0 0 20px rgba(212,151,111,0.15)"; }}>
           {ctaText}
         </a>
       </div>
@@ -998,10 +1006,12 @@ function SettleScreen({ onReady }) {
 function BreathingScreen({ onComplete }) {
   const [vis, setVis] = useState(false);
   const [pulse, setPulse] = useState(false);
+  const [phase, setPhase] = useState(0);
   useEffect(() => {
     setTimeout(() => setVis(true), 200);
     setTimeout(() => setPulse(true), 600);
-    setTimeout(() => onComplete(), 5500);
+    setTimeout(() => setPhase(1), 2200);
+    setTimeout(() => onComplete(), 4500);
   }, [onComplete]);
 
   return (
@@ -1041,8 +1051,8 @@ function BreathingScreen({ onComplete }) {
 
       <p style={{ fontFamily: T.fonts.body, fontSize: 16, color: T.textMuted,
         marginTop: 40, fontStyle: "italic", opacity: vis ? 0.7 : 0,
-        transition: "opacity 1.5s ease 0.8s" }}>
-        Your results are being prepared</p>
+        transition: "opacity 0.8s ease" }}>
+        {phase === 0 ? "Reading your pattern" : "Mapping your dimensions"}</p>
     </div>
   );
 }
