@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════
 // ANSR PULSE — Capture API (Vercel Serverless)
-// Saves to Google Sheets + Sends results email via Resend
+// Saves to Google Sheets + Sends results email via Resend + Pushes to Kajabi via Zapier
 // ═══════════════════════════════════════════
 
 // ── Profile Data for Email ──
@@ -77,10 +77,24 @@ function buildEmail(data) {
   const descP1 = profileData.descriptionP1;
   const descP2 = profileData.descriptionP2;
   const hope = profileData.hope;
-  const profileUrl = process.env.PAID_PROFILE_URL || "https://beauty.eliaheals.com/elia-ansr-profile";
+
+  // ── PAID_PROFILE_URL now points to Vercel LP with profile params ──
+  const baseProfileUrl = process.env.PAID_PROFILE_URL || "https://ansr-profile.vercel.app";
+  const profileKey = {
+    "Sunfire": "sunfire", "Velvet Blade": "velvetblade", "Eclipse": "eclipse",
+    "Summer Storm": "summerstorm", "Heartwood": "heartwood", "New Moon": "newmoon"
+  }[profileName] || "sunfire";
+  const secondaryKey = {
+    "Sunfire": "sunfire", "Velvet Blade": "velvetblade", "Eclipse": "eclipse",
+    "Summer Storm": "summerstorm", "Heartwood": "heartwood", "New Moon": "newmoon"
+  }[secondaryName] || "";
+  const profileUrl = secondaryKey 
+    ? `${baseProfileUrl}?p=${profileKey}&u=${secondaryKey}`
+    : `${baseProfileUrl}?p=${profileKey}`;
+
   const pulseUrl = "https://ansr-pulse.vercel.app";
 
-  // Build dimension rows — show top 4, hide bottom 2
+  // Build dimension rows
   let dimensionRows = "";
   if (data.scores && typeof data.scores === "object") {
     const dims = Object.entries(data.scores)
@@ -124,76 +138,42 @@ function buildEmail(data) {
 <title>Your ANSR Pulse — ${profileName}</title>
 </head>
 <body style="margin:0;padding:0;background-color:#1A1714;font-family:Georgia,'Times New Roman',serif;">
-
-<!-- Outer wrapper -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#1A1714;">
 <tr><td align="center" style="padding:0;">
-
-<!-- Inner container -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto;">
-
-<!-- Top spacing -->
 <tr><td style="height:48px;"></td></tr>
-
-<!-- ELIA Header -->
 <tr><td align="center" style="padding:0 24px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:normal;color:#F0E8DC;letter-spacing:0.35em;margin:0;">ELIA</p>
 </td></tr>
-
-<!-- Divider line -->
 <tr><td align="center" style="padding:24px 24px 32px;">
   <div style="width:40px;height:1px;background-color:#C4896A;opacity:0.5;"></div>
 </td></tr>
-
-<!-- Signature label -->
 <tr><td align="center" style="padding:0 24px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:11px;color:#C4896A;letter-spacing:0.15em;margin:0 0 24px 0;text-transform:uppercase;">Your ANSR Pulse Signature</p>
 </td></tr>
-
-<!-- Profile Name -->
 <tr><td align="center" style="padding:0 24px;">
   <h1 style="font-family:Georgia,'Times New Roman',serif;font-size:38px;font-weight:normal;color:#F0E8DC;letter-spacing:0.04em;margin:0 0 12px 0;">${profileName}</h1>
 </td></tr>
-
-<!-- Tagline -->
 <tr><td align="center" style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:rgba(240,232,220,0.75);font-style:italic;line-height:1.6;margin:0 0 8px 0;">${tagline}</p>
 </td></tr>
-
-${secondaryName ? `
-<!-- Secondary undertone -->
-<tr><td align="center" style="padding:0 32px;">
+${secondaryName ? `<tr><td align="center" style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:13px;color:#7A7068;margin:0;">with <span style="color:#B0A494;">${secondaryName}</span> undertone</p>
-</td></tr>
-` : ""}
-
-<!-- Spacing -->
+</td></tr>` : ""}
 <tr><td style="height:36px;"></td></tr>
-
-<!-- Profile color bar -->
 <tr><td align="center" style="padding:0 48px;">
   <div style="width:100%;height:2px;background:linear-gradient(90deg,transparent,${profileColor},transparent);"></div>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:36px;"></td></tr>
-
-<!-- Personal greeting -->
 <tr><td style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#B0A494;line-height:1.8;margin:0 0 20px 0;">${firstName},</p>
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#B0A494;line-height:1.8;margin:0 0 8px 0;">You took the ANSR Pulse. Your nervous system answered.</p>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:24px;"></td></tr>
-
-<!-- Description — 2 paragraphs only -->
 <tr><td style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#B0A494;line-height:1.85;margin:0 0 16px 0;">${descP1}</p>
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#B0A494;line-height:1.85;margin:0 0 24px 0;">${descP2}</p>
 </td></tr>
-
-<!-- Hope quote — 3 sentences, emotional core -->
 <tr><td style="padding:0 32px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
   <tr>
@@ -204,44 +184,26 @@ ${secondaryName ? `
   </tr>
   </table>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:36px;"></td></tr>
-
-<!-- Dimension divider -->
 <tr><td align="center" style="padding:0 48px;">
   <div style="width:100%;height:1px;background-color:rgba(255,255,255,0.06);"></div>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:28px;"></td></tr>
-
-<!-- Dimensions — top 4 shown, bottom 2 hidden -->
 <tr><td style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:11px;color:#C4896A;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 16px 0;">Your Six Dimensions</p>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
     ${dimensionRows}
   </table>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:36px;"></td></tr>
-
-<!-- Divider -->
 <tr><td align="center" style="padding:0 48px;">
   <div style="width:100%;height:1px;background-color:rgba(255,255,255,0.06);"></div>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:32px;"></td></tr>
-
-<!-- Bridge to Profile — gap, not spec sheet -->
 <tr><td align="center" style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#F0E8DC;line-height:1.7;margin:0 0 8px 0;">Your Pulse named the pattern.</p>
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#C4896A;line-height:1.7;margin:0 0 24px 0;">Your Profile maps what's ready to shift.</p>
 </td></tr>
-
-<!-- CTA Button — bright rose gold #D4976F, white text -->
 <tr><td align="center" style="padding:0 32px;">
   <table role="presentation" cellpadding="0" cellspacing="0">
   <tr>
@@ -252,57 +214,32 @@ ${secondaryName ? `
   </table>
   <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;color:#7A7068;margin:12px 0 0 0;letter-spacing:0.05em;">Founding price · Instant PDF · 12 minutes</p>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:16px;"></td></tr>
-
-<!-- Credibility -->
 <tr><td align="center" style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:10px;color:#7A7068;line-height:1.6;margin:0;">Built on peer-reviewed research from Stanford, University College London,<br>the Max Planck Institute, and the Polyvagal Institute.</p>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:48px;"></td></tr>
-
-<!-- Divider -->
 <tr><td align="center" style="padding:0 48px;">
   <div style="width:100%;height:1px;background-color:rgba(255,255,255,0.06);"></div>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:32px;"></td></tr>
-
-<!-- Signature -->
 <tr><td style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:14px;color:#B0A494;margin:0 0 4px 0;">&mdash; Alexandre</p>
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:12px;color:#7A7068;font-style:italic;margin:0;">ELIA &mdash; Beauty That Heals</p>
 </td></tr>
-
-<!-- Spacing -->
 <tr><td style="height:36px;"></td></tr>
-
-<!-- P.S. Share -->
 <tr><td style="padding:0 32px;">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:12px;color:#7A7068;line-height:1.7;margin:0;">Know a woman who needs to see her pattern? The Pulse is free: <a href="${pulseUrl}" style="color:#C4896A;text-decoration:underline;text-underline-offset:3px;">${pulseUrl}</a></p>
 </td></tr>
-
-<!-- Bottom spacing -->
 <tr><td style="height:48px;"></td></tr>
-
-<!-- Footer -->
 <tr><td align="center" style="padding:0 32px 48px;border-top:1px solid rgba(255,255,255,0.05);">
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:16px;font-weight:normal;color:#F0E8DC;letter-spacing:0.15em;margin:24px 0 4px 0;">ELIA</p>
   <p style="font-family:Georgia,'Times New Roman',serif;font-size:10px;color:#7A7068;font-style:italic;letter-spacing:0.08em;margin:0 0 16px 0;">Beauty That Heals</p>
   <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:9px;color:#5A544E;line-height:1.7;margin:0;">ANSR™ — Aesthetic Nervous System Regulation<br>© ELIA / Uskale SA · All rights reserved</p>
 </td></tr>
-
 </table>
-<!-- /Inner container -->
-
 </td></tr>
 </table>
-<!-- /Outer wrapper -->
-
 </body>
 </html>`;
 }
@@ -319,26 +256,51 @@ export default async function handler(req, res) {
   const data = req.body;
   if (!data || !data.email) return res.status(400).json({ error: "Missing email" });
 
-  const results = { sheet: false, email: false };
+  const results = { sheet: false, email: false, zapier: false };
 
   // ═══ 1. SAVE TO GOOGLE SHEET ═══
   const SHEET_WEBHOOK = process.env.GOOGLE_SHEET_WEBHOOK;
   if (SHEET_WEBHOOK) {
     try {
-      await fetch(SHEET_WEBHOOK, {
+      const sheetRes = await fetch(SHEET_WEBHOOK, {
         method: "POST",
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(data),
+        redirect: "manual",
       });
-      results.sheet = true;
+      // Google Apps Script returns 302 on success
+      results.sheet = sheetRes.ok || sheetRes.status === 302 || sheetRes.status === 301;
+      console.log("Sheet response status:", sheetRes.status);
     } catch (e) {
-      console.error("Sheet error:", e);
+      console.error("Sheet error:", e.message);
     }
   }
 
-  // ═══ 2. SEND RESULTS EMAIL VIA RESEND ═══
+  // ═══ 2. PUSH TO KAJABI VIA ZAPIER ═══
+  const ZAPIER_WEBHOOK = process.env.ZAPIER_WEBHOOK;
+  if (ZAPIER_WEBHOOK) {
+    try {
+      const zapRes = await fetch(ZAPIER_WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name || "",
+          email: data.email || "",
+          profile: data.profile || "",
+          secondary: data.secondary || "",
+          scores: data.scores || {},
+        }),
+      });
+      results.zapier = zapRes.ok;
+      console.log("Zapier response:", zapRes.status);
+    } catch (e) {
+      console.error("Zapier error:", e.message);
+    }
+  }
+
+  // ═══ 3. SEND RESULTS EMAIL VIA RESEND ═══
   const RESEND_KEY = process.env.RESEND_API_KEY;
-  const FROM = process.env.FROM_EMAIL || "ELIA <hello@eliaheals.com>";
+  const FROM = process.env.FROM_EMAIL || "Alexandre Olive <care@eliaheals.com>";
 
   if (RESEND_KEY) {
     try {
