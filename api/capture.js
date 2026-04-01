@@ -266,10 +266,9 @@ export default async function handler(req, res) {
         method: "POST",
         headers: { "Content-Type": "text/plain" },
         body: JSON.stringify(data),
-        redirect: "manual",
+        redirect: "follow",
       });
-      // Google Apps Script returns 302 on success
-      results.sheet = sheetRes.ok || sheetRes.status === 302 || sheetRes.status === 301;
+      results.sheet = sheetRes.ok;
       console.log("Sheet response status:", sheetRes.status);
     } catch (e) {
       console.error("Sheet error:", e.message);
