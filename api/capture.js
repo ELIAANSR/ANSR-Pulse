@@ -95,8 +95,8 @@ function buildEmail(data) {
   const pulseUrl = "https://ansr-pulse.vercel.app";
 
   // Build dimension rows — top 4 shown, lowest highlighted, 5th hidden
-  // Dimensions below 4.5 shown in warm terracotta
-  const ALERT_COLOR = "#C27A5A"; // muted terracotta — attention without alarm
+  // On ivory background. Low scores in warm terracotta. Lowest gets left border accent.
+  const ALERT_COLOR = "#C27A5A";
   let dimensionRows = "";
   if (data.scores && typeof data.scores === "object") {
     const dims = Object.entries(data.scores)
@@ -104,16 +104,16 @@ function buildEmail(data) {
       .sort((a, b) => b.score - a.score);
 
     const shown = dims.slice(0, 4);
-    const middle = dims[4]; // 5th — hidden
-    const lowest = dims[5]; // 6th — highlighted
+    const middle = dims[4];
+    const lowest = dims[5];
 
     shown.forEach(d => {
       const band = getBandLabel(d.score);
       const isLow = d.score < 4.5;
-      const labelColor = isLow ? ALERT_COLOR : "#F0E8DC";
-      const scoreColor = isLow ? ALERT_COLOR : "#7A7068";
+      const labelColor = isLow ? ALERT_COLOR : "#2C2C2C";
+      const scoreColor = isLow ? ALERT_COLOR : "#9B9590";
       dimensionRows += `
-      <tr><td style="padding:6px 0;">
+      <tr><td style="padding:7px 0;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td style="font-family:Georgia,serif;font-size:13px;color:${labelColor};letter-spacing:0.06em;text-transform:uppercase;">${d.label}</td>
@@ -125,11 +125,11 @@ function buildEmail(data) {
 
     if (middle) {
       dimensionRows += `
-      <tr><td style="padding:6px 0;">
+      <tr><td style="padding:7px 0;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         <tr>
-          <td style="font-family:Georgia,serif;font-size:13px;color:rgba(240,232,220,0.35);letter-spacing:0.06em;text-transform:uppercase;">${middle.label}</td>
-          <td align="right" style="font-family:Georgia,serif;font-size:12px;color:rgba(122,112,104,0.5);font-style:italic;">In your full Profile</td>
+          <td style="font-family:Georgia,serif;font-size:13px;color:rgba(44,44,44,0.3);letter-spacing:0.06em;text-transform:uppercase;">${middle.label}</td>
+          <td align="right" style="font-family:Georgia,serif;font-size:12px;color:rgba(44,44,44,0.3);font-style:italic;">In your full Profile</td>
         </tr>
         </table>
       </td></tr>`;
@@ -138,14 +138,20 @@ function buildEmail(data) {
     if (lowest) {
       const lowestBand = getBandLabel(lowest.score);
       dimensionRows += `
-      <tr><td style="padding:16px 0 6px;">
+      <tr><td style="padding:14px 0 4px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         <tr>
-          <td style="font-family:Georgia,serif;font-size:13px;color:${ALERT_COLOR};letter-spacing:0.06em;text-transform:uppercase;font-weight:bold;">${lowest.label}</td>
-          <td align="right" style="font-family:Georgia,serif;font-size:12px;color:${ALERT_COLOR};font-weight:bold;">${lowest.score}/10 · ${lowestBand}</td>
+          <td style="border-left:3px solid ${ALERT_COLOR};padding-left:12px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="font-family:Georgia,serif;font-size:13px;color:${ALERT_COLOR};letter-spacing:0.06em;text-transform:uppercase;font-weight:bold;">${lowest.label}</td>
+              <td align="right" style="font-family:Georgia,serif;font-size:12px;color:${ALERT_COLOR};font-weight:bold;">${lowest.score}/10 · ${lowestBand}</td>
+            </tr>
+            </table>
+            <p style="font-family:Georgia,serif;font-size:12px;color:${ALERT_COLOR};font-style:italic;margin:5px 0 0 0;opacity:0.85;">This is where the cost is showing up.</p>
+          </td>
         </tr>
         </table>
-        <p style="font-family:Georgia,serif;font-size:12px;color:${ALERT_COLOR};font-style:italic;margin:6px 0 0 0;opacity:0.85;">This is where the cost is showing up.</p>
       </td></tr>`;
     }
   }
@@ -209,10 +215,15 @@ ${secondaryName ? `<tr><td align="center" style="padding:0 32px;">
   <div style="width:100%;height:1px;background-color:rgba(255,255,255,0.06);"></div>
 </td></tr>
 <tr><td style="height:28px;"></td></tr>
-<tr><td style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:11px;color:#C4896A;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 16px 0;">Your Six Dimensions</p>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-    ${dimensionRows}
+<!-- Ivory dimensions container -->
+<tr><td style="padding:0 16px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF5EE;border-radius:4px;">
+  <tr><td style="padding:28px 24px;">
+    <p style="font-family:Georgia,'Times New Roman',serif;font-size:11px;color:#C4896A;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 16px 0;">Your Six Dimensions</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+      ${dimensionRows}
+    </table>
+  </td></tr>
   </table>
 </td></tr>
 <tr><td style="height:36px;"></td></tr>
@@ -220,23 +231,23 @@ ${secondaryName ? `<tr><td align="center" style="padding:0 32px;">
   <div style="width:100%;height:1px;background-color:rgba(255,255,255,0.06);"></div>
 </td></tr>
 <tr><td style="height:32px;"></td></tr>
-<!-- Ivory CTA box — the Cartier box moment -->
-<tr><td style="padding:0 16px;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF5EE;border-radius:4px;">
-  <tr><td style="padding:40px 28px;" align="center">
-    <p style="font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#2C2C2C;line-height:1.7;margin:0 0 6px 0;">The Pulse measured 11 data points. Enough to identify your profile.</p>
-    <p style="font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#C4896A;line-height:1.7;margin:0 0 28px 0;">Your full Profile measures 42. That's the complete picture.</p>
-    <table role="presentation" cellpadding="0" cellspacing="0">
-    <tr>
-      <td align="center" style="background-color:#2C2C2C;border-radius:2px;">
-        <a href="${profileUrl}" target="_blank" style="display:inline-block;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;letter-spacing:0.14em;text-transform:uppercase;color:#FAF5EE;text-decoration:none;padding:15px 36px;">See your full Profile &mdash; &euro;97</a>
-      </td>
-    </tr>
-    </table>
-    <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;color:#9B9590;margin:14px 0 0 0;letter-spacing:0.05em;">42 questions · 14 pages · Instant PDF</p>
-    <p style="font-family:Georgia,'Times New Roman',serif;font-size:10px;color:#9B9590;line-height:1.6;margin:16px 0 0 0;">Built on peer-reviewed research from Stanford, University College London,<br>the Max Planck Institute, and the Polyvagal Institute.</p>
-  </td></tr>
+<tr><td align="center" style="padding:0 32px;">
+  <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#F0E8DC;line-height:1.7;margin:0 0 8px 0;">The Pulse measured 11 data points. Enough to identify your profile.</p>
+  <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#C4896A;line-height:1.7;margin:0 0 24px 0;">Your full Profile measures 42. That's the complete picture.</p>
+</td></tr>
+<tr><td align="center" style="padding:0 32px;">
+  <table role="presentation" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" style="background-color:#D4976F;border-radius:2px;">
+      <a href="${profileUrl}" target="_blank" style="display:inline-block;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;letter-spacing:0.14em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;padding:15px 36px;">See your full Profile &mdash; &euro;97</a>
+    </td>
+  </tr>
   </table>
+  <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;color:#7A7068;margin:12px 0 0 0;letter-spacing:0.05em;">42 questions · 14 pages · Instant PDF</p>
+</td></tr>
+<tr><td style="height:16px;"></td></tr>
+<tr><td align="center" style="padding:0 32px;">
+  <p style="font-family:Georgia,'Times New Roman',serif;font-size:10px;color:#7A7068;line-height:1.6;margin:0;">Built on peer-reviewed research from Stanford, University College London,<br>the Max Planck Institute, and the Polyvagal Institute.</p>
 </td></tr>
 <tr><td style="height:48px;"></td></tr>
 <tr><td align="center" style="padding:0 48px;">
