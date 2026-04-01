@@ -49,14 +49,14 @@ const PROFILE_EMAIL_DATA = {
   },
 };
 
-// ── Dimension labels ──
-const DIMENSION_LABELS = {
-  alertness: "Alertness",
-  sensitivity: "Sensitivity",
-  vitality: "Vitality",
-  connection: "Connection",
-  performance: "Performance",
-  aliveness: "Aliveness",
+// ── Dimension labels + phrases ──
+const DIMENSIONS = {
+  alertness:   { label: "Alertness",   phrase: "Is your system stuck in survival mode?" },
+  sensitivity: { label: "Sensitivity", phrase: "How much can you still feel?" },
+  vitality:    { label: "Vitality",    phrase: "Does your body actually recover?" },
+  connection:  { label: "Connection",  phrase: "How present are you in your relationships?" },
+  performance: { label: "Performance", phrase: "What is your work costing you?" },
+  aliveness:   { label: "Aliveness",   phrase: "Are you still connected to who you are?" },
 };
 
 // ── Profile keys map ──
@@ -72,7 +72,7 @@ function getBandLabel(score) {
   return "Open";
 }
 
-// ── Build the HTML email (dark luxury design) ──
+// ── Build the HTML email ──
 function buildEmail(data) {
   const profileData = PROFILE_EMAIL_DATA[data.profile] || PROFILE_EMAIL_DATA["New Moon"];
   const profileColor = profileData.color;
@@ -84,190 +84,204 @@ function buildEmail(data) {
   const descP2 = profileData.descriptionP2;
   const hope = profileData.hope;
 
-  // ── CTA links to Vercel Profile LP with params ──
   const baseProfileUrl = process.env.PAID_PROFILE_URL || "https://ansr-profile.vercel.app";
   const profileKey = PROFILE_KEYS[profileName] || "sunfire";
   const secondaryKey = PROFILE_KEYS[secondaryName] || "";
   const profileUrl = secondaryKey
     ? `${baseProfileUrl}?p=${profileKey}&u=${secondaryKey}`
     : `${baseProfileUrl}?p=${profileKey}`;
-
   const pulseUrl = "https://ansr-pulse.vercel.app";
 
-  // Build dimension rows — top 4 shown, lowest highlighted, 5th hidden
-  // On ivory background. Low scores in warm terracotta. Lowest gets left border accent.
-  const ALERT_COLOR = "#C27A5A";
+  // ── Build dimension rows for ivory container ──
+  // Top 2 by score: name + score + band + phrase
+  // Dims 3-6: locked "In your full Profile"
+  // OVERRIDE: any dim < 4.0 gets terracotta + left border + cost line
+  const ALERT = "#C27A5A";
   let dimensionRows = "";
   if (data.scores && typeof data.scores === "object") {
     const dims = Object.entries(data.scores)
-      .map(([key, score]) => ({ key, label: DIMENSION_LABELS[key] || key, score: parseFloat(score) }))
+      .map(([key, score]) => {
+        const d = DIMENSIONS[key] || { label: key, phrase: "" };
+        return { key, label: d.label, phrase: d.phrase, score: parseFloat(score) };
+      })
       .sort((a, b) => b.score - a.score);
 
-    const shown = dims.slice(0, 4);
-    const middle = dims[4];
-    const lowest = dims[5];
-
-    shown.forEach(d => {
+    dims.forEach((d, i) => {
       const band = getBandLabel(d.score);
-      const isLow = d.score < 4.5;
-      const labelColor = isLow ? ALERT_COLOR : "#2C2C2C";
-      const scoreColor = isLow ? ALERT_COLOR : "#9B9590";
-      dimensionRows += `
-      <tr><td style="padding:7px 0;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="font-family:Georgia,serif;font-size:13px;color:${labelColor};letter-spacing:0.06em;text-transform:uppercase;">${d.label}</td>
-          <td align="right" style="font-family:Georgia,serif;font-size:12px;color:${scoreColor};">${d.score}/10 · ${band}</td>
-        </tr>
-        </table>
-      </td></tr>`;
-    });
+      const isLow = d.score < 4.0;
+      const isTop2 = i < 2;
 
-    if (middle) {
-      dimensionRows += `
-      <tr><td style="padding:7px 0;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="font-family:Georgia,serif;font-size:13px;color:rgba(44,44,44,0.3);letter-spacing:0.06em;text-transform:uppercase;">${middle.label}</td>
-          <td align="right" style="font-family:Georgia,serif;font-size:12px;color:rgba(44,44,44,0.3);font-style:italic;">In your full Profile</td>
-        </tr>
-        </table>
-      </td></tr>`;
-    }
-
-    if (lowest) {
-      const lowestBand = getBandLabel(lowest.score);
-      dimensionRows += `
-      <tr><td style="padding:14px 0 4px;">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="border-left:3px solid ${ALERT_COLOR};padding-left:12px;">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-              <td style="font-family:Georgia,serif;font-size:13px;color:${ALERT_COLOR};letter-spacing:0.06em;text-transform:uppercase;font-weight:bold;">${lowest.label}</td>
-              <td align="right" style="font-family:Georgia,serif;font-size:12px;color:${ALERT_COLOR};font-weight:bold;">${lowest.score}/10 · ${lowestBand}</td>
-            </tr>
-            </table>
-            <p style="font-family:Georgia,serif;font-size:12px;color:${ALERT_COLOR};font-style:italic;margin:5px 0 0 0;opacity:0.85;">This is where the cost is showing up.</p>
+      if (isLow) {
+        dimensionRows += `
+        <tr><td style="padding:10px 0;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td style="border-left:3px solid ${ALERT};padding-left:12px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td style="font-family:Georgia,serif;font-size:13px;color:${ALERT};letter-spacing:0.06em;text-transform:uppercase;font-weight:bold;">${d.label}</td>
+              <td align="right" style="font-family:Georgia,serif;font-size:12px;color:${ALERT};font-weight:bold;">${d.score}/10 &middot; ${band}</td>
+            </tr></table>
+            <p style="font-family:Georgia,serif;font-size:12px;color:${ALERT};font-style:italic;margin:4px 0 0 0;">This is where the cost is showing up.</p>
           </td>
-        </tr>
-        </table>
-      </td></tr>`;
-    }
+          </tr></table>
+        </td></tr>`;
+      } else if (isTop2) {
+        dimensionRows += `
+        <tr><td style="padding:8px 0;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+            <td style="font-family:Georgia,serif;font-size:13px;color:#2C2C2C;letter-spacing:0.06em;text-transform:uppercase;">${d.label}</td>
+            <td align="right" style="font-family:Georgia,serif;font-size:12px;color:#6B6560;">${d.score}/10 &middot; ${band}</td>
+          </tr></table>
+          <p style="font-family:Georgia,serif;font-size:12px;color:#9B9590;font-style:italic;margin:3px 0 0 0;">${d.phrase}</p>
+        </td></tr>`;
+      } else {
+        dimensionRows += `
+        <tr><td style="padding:6px 0;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+            <td style="font-family:Georgia,serif;font-size:13px;color:rgba(44,44,44,0.35);letter-spacing:0.06em;text-transform:uppercase;">${d.label}</td>
+            <td align="right" style="font-family:Georgia,serif;font-size:12px;color:rgba(44,44,44,0.3);font-style:italic;">In your full Profile</td>
+          </tr></table>
+        </td></tr>`;
+      }
+    });
   }
 
+  // ── Email HTML ──
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your ANSR Pulse — ${profileName}</title>
+<title>${profileName}</title>
 </head>
 <body style="margin:0;padding:0;background-color:#1A1714;font-family:Georgia,'Times New Roman',serif;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#1A1714;">
 <tr><td align="center" style="padding:0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;margin:0 auto;">
+
+<!-- Header -->
 <tr><td style="height:48px;"></td></tr>
 <tr><td align="center" style="padding:0 24px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:22px;font-weight:normal;color:#F0E8DC;letter-spacing:0.35em;margin:0;">ELIA</p>
+  <p style="font-family:Georgia,serif;font-size:22px;color:#F0E8DC;letter-spacing:0.35em;margin:0;">ELIA</p>
 </td></tr>
 <tr><td align="center" style="padding:24px 24px 32px;">
   <div style="width:40px;height:1px;background-color:#C4896A;opacity:0.5;"></div>
 </td></tr>
+
+<!-- Pulse signature label -->
 <tr><td align="center" style="padding:0 24px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:11px;color:#C4896A;letter-spacing:0.15em;margin:0 0 24px 0;text-transform:uppercase;">Your ANSR Pulse Signature</p>
+  <p style="font-family:Georgia,serif;font-size:11px;color:#C4896A;letter-spacing:0.15em;margin:0 0 24px 0;text-transform:uppercase;">Your ANSR Pulse Signature</p>
 </td></tr>
+
+<!-- Profile name -->
 <tr><td align="center" style="padding:0 24px;">
-  <h1 style="font-family:Georgia,'Times New Roman',serif;font-size:38px;font-weight:normal;color:#F0E8DC;letter-spacing:0.04em;margin:0 0 12px 0;">${profileName}</h1>
+  <h1 style="font-family:Georgia,serif;font-size:38px;font-weight:normal;color:#F0E8DC;letter-spacing:0.04em;margin:0 0 12px 0;">${profileName}</h1>
 </td></tr>
+
+<!-- Tagline -->
 <tr><td align="center" style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:rgba(240,232,220,0.75);font-style:italic;line-height:1.6;margin:0 0 8px 0;">${tagline}</p>
+  <p style="font-family:Georgia,serif;font-size:17px;color:rgba(240,232,220,0.75);font-style:italic;line-height:1.6;margin:0 0 8px 0;">${tagline}</p>
 </td></tr>
-${secondaryName ? `<tr><td align="center" style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:13px;color:#7A7068;margin:0;">with <span style="color:#B0A494;">${secondaryName}</span> undertone</p>
+
+${secondaryName ? `<!-- Undertone -->
+<tr><td align="center" style="padding:0 32px;">
+  <p style="font-family:Georgia,serif;font-size:13px;color:#7A7068;margin:0;">with <span style="color:#B0A494;">${secondaryName}</span> undertone</p>
 </td></tr>` : ""}
+
+<!-- Profile color bar -->
 <tr><td style="height:36px;"></td></tr>
 <tr><td align="center" style="padding:0 48px;">
   <div style="width:100%;height:2px;background:linear-gradient(90deg,transparent,${profileColor},transparent);"></div>
 </td></tr>
 <tr><td style="height:36px;"></td></tr>
+
+<!-- Personal greeting + description -->
 <tr><td style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#B0A494;line-height:1.8;margin:0 0 20px 0;">${firstName},</p>
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#B0A494;line-height:1.8;margin:0 0 8px 0;">You took the ANSR Pulse. Your nervous system answered.</p>
+  <p style="font-family:Georgia,serif;font-size:15px;color:#B0A494;line-height:1.8;margin:0 0 20px 0;">${firstName},</p>
+  <p style="font-family:Georgia,serif;font-size:15px;color:#B0A494;line-height:1.8;margin:0 0 8px 0;">You took the ANSR Pulse. Your nervous system answered.</p>
 </td></tr>
 <tr><td style="height:24px;"></td></tr>
 <tr><td style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#B0A494;line-height:1.85;margin:0 0 16px 0;">${descP1}</p>
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#B0A494;line-height:1.85;margin:0 0 24px 0;">${descP2}</p>
+  <p style="font-family:Georgia,serif;font-size:15px;color:#B0A494;line-height:1.85;margin:0 0 16px 0;">${descP1}</p>
+  <p style="font-family:Georgia,serif;font-size:15px;color:#B0A494;line-height:1.85;margin:0 0 24px 0;">${descP2}</p>
 </td></tr>
+
+<!-- Hope quote -->
 <tr><td style="padding:0 32px;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-  <tr>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
     <td style="width:2px;background-color:${profileColor};"></td>
     <td style="padding:20px 24px;">
-      <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#F0E8DC;line-height:1.9;font-style:italic;margin:0;">${hope}</p>
+      <p style="font-family:Georgia,serif;font-size:15px;color:#F0E8DC;line-height:1.9;font-style:italic;margin:0;">${hope}</p>
     </td>
-  </tr>
-  </table>
+  </tr></table>
 </td></tr>
+
 <tr><td style="height:36px;"></td></tr>
-<tr><td align="center" style="padding:0 48px;">
-  <div style="width:100%;height:1px;background-color:rgba(255,255,255,0.06);"></div>
-</td></tr>
-<tr><td style="height:28px;"></td></tr>
+
 <!-- Ivory dimensions container -->
 <tr><td style="padding:0 16px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#FAF5EE;border-radius:4px;">
   <tr><td style="padding:28px 24px;">
-    <p style="font-family:Georgia,'Times New Roman',serif;font-size:11px;color:#C4896A;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 16px 0;">Your Six Dimensions</p>
+    <p style="font-family:Georgia,serif;font-size:11px;color:#C4896A;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 16px 0;">Your Six Dimensions</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
       ${dimensionRows}
     </table>
   </td></tr>
   </table>
 </td></tr>
-<tr><td style="height:36px;"></td></tr>
-<tr><td align="center" style="padding:0 48px;">
-  <div style="width:100%;height:1px;background-color:rgba(255,255,255,0.06);"></div>
-</td></tr>
-<tr><td style="height:32px;"></td></tr>
+
+<tr><td style="height:40px;"></td></tr>
+
+<!-- Bridge text -->
 <tr><td align="center" style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#F0E8DC;line-height:1.7;margin:0 0 8px 0;">The Pulse measured 11 data points. Enough to identify your profile.</p>
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#C4896A;line-height:1.7;margin:0 0 24px 0;">Your full Profile measures 42. That's the complete picture.</p>
+  <p style="font-family:Georgia,serif;font-size:16px;color:#F0E8DC;line-height:1.7;margin:0 0 8px 0;">The Pulse measured 11 data points. Enough to identify your profile.</p>
+  <p style="font-family:Georgia,serif;font-size:16px;color:#C4896A;line-height:1.7;margin:0 0 28px 0;">Your full Profile measures 42. That's the complete picture.</p>
 </td></tr>
+
+<!-- CTA button -->
 <tr><td align="center" style="padding:0 32px;">
-  <table role="presentation" cellpadding="0" cellspacing="0">
-  <tr>
+  <table role="presentation" cellpadding="0" cellspacing="0"><tr>
     <td align="center" style="background-color:#D4976F;border-radius:2px;">
-      <a href="${profileUrl}" target="_blank" style="display:inline-block;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;font-weight:normal;letter-spacing:0.14em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;padding:15px 36px;">See your full Profile &mdash; &euro;97</a>
+      <a href="${profileUrl}" target="_blank" style="display:inline-block;font-family:Georgia,serif;font-size:14px;letter-spacing:0.12em;text-transform:uppercase;color:#FFFFFF;text-decoration:none;padding:16px 40px;">See your full Profile &mdash; &euro;97</a>
     </td>
-  </tr>
-  </table>
-  <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;color:#7A7068;margin:12px 0 0 0;letter-spacing:0.05em;">42 questions · 14 pages · Instant PDF</p>
+  </tr></table>
+  <p style="font-family:Georgia,serif;font-size:11px;color:#7A7068;margin:14px 0 0 0;letter-spacing:0.04em;">42 questions &middot; 14 pages &middot; Instant PDF</p>
 </td></tr>
-<tr><td style="height:16px;"></td></tr>
+
+<tr><td style="height:20px;"></td></tr>
+
+<!-- Credibility -->
 <tr><td align="center" style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:10px;color:#7A7068;line-height:1.6;margin:0;">Built on peer-reviewed research from Stanford, University College London,<br>the Max Planck Institute, and the Polyvagal Institute.</p>
+  <p style="font-family:Georgia,serif;font-size:11px;color:#7A7068;line-height:1.6;margin:0;">Built on peer-reviewed research from Stanford, UCL,<br>Max Planck Institute, and the Polyvagal Institute.</p>
 </td></tr>
+
 <tr><td style="height:48px;"></td></tr>
 <tr><td align="center" style="padding:0 48px;">
   <div style="width:100%;height:1px;background-color:rgba(255,255,255,0.06);"></div>
 </td></tr>
 <tr><td style="height:32px;"></td></tr>
+
+<!-- Signature -->
 <tr><td style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:14px;color:#B0A494;margin:0 0 4px 0;">&mdash; Alexandre</p>
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:12px;color:#7A7068;font-style:italic;margin:0;">ELIA &mdash; Beauty That Heals</p>
+  <p style="font-family:Georgia,serif;font-size:15px;color:#B0A494;margin:0 0 4px 0;">&mdash; Alexandre</p>
+  <p style="font-family:Georgia,serif;font-size:13px;color:#7A7068;font-style:italic;margin:0;">ELIA &mdash; Beauty That Heals</p>
 </td></tr>
+
 <tr><td style="height:36px;"></td></tr>
+
+<!-- Share -->
 <tr><td style="padding:0 32px;">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:12px;color:#7A7068;line-height:1.7;margin:0;">Know a woman who needs to see her pattern? The Pulse is free: <a href="${pulseUrl}" style="color:#C4896A;text-decoration:underline;text-underline-offset:3px;">${pulseUrl}</a></p>
+  <p style="font-family:Georgia,serif;font-size:13px;color:#7A7068;line-height:1.7;margin:0;">Know a woman who needs to see her pattern?<br>The Pulse is free: <a href="${pulseUrl}" style="color:#C4896A;text-decoration:underline;">${pulseUrl}</a></p>
 </td></tr>
+
 <tr><td style="height:48px;"></td></tr>
+
+<!-- Footer -->
 <tr><td align="center" style="padding:0 32px 48px;border-top:1px solid rgba(255,255,255,0.05);">
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:16px;font-weight:normal;color:#F0E8DC;letter-spacing:0.15em;margin:24px 0 4px 0;">ELIA</p>
-  <p style="font-family:Georgia,'Times New Roman',serif;font-size:10px;color:#7A7068;font-style:italic;letter-spacing:0.08em;margin:0 0 16px 0;">Beauty That Heals</p>
-  <p style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:9px;color:#5A544E;line-height:1.7;margin:0;">ANSR™ — Aesthetic Nervous System Regulation<br>© ELIA / Uskale SA · All rights reserved</p>
+  <p style="font-family:Georgia,serif;font-size:16px;color:#F0E8DC;letter-spacing:0.15em;margin:24px 0 4px 0;">ELIA</p>
+  <p style="font-family:Georgia,serif;font-size:11px;color:#7A7068;font-style:italic;letter-spacing:0.08em;margin:0 0 16px 0;">Beauty That Heals</p>
+  <p style="font-family:Georgia,serif;font-size:10px;color:#5A544E;line-height:1.7;margin:0;">ANSR&trade; &mdash; Aesthetic Nervous System Regulation<br>&copy; ELIA / Uskale SA &middot; All rights reserved</p>
 </td></tr>
+
 </table>
 </td></tr>
 </table>
