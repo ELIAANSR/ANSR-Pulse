@@ -118,70 +118,70 @@ const INSIGHTS = {
 // ── Questions (UNCHANGED) ──
 const QUESTIONS = [
   { dim: "alertness", text: "It's Sunday evening. What happens in your body?", options: [
-    { text: "I start mentally preparing for the week — I can't help it", type: "S" },
-    { text: "I feel flat — weekends and weekdays feel the same", type: "D" },
-    { text: "A low hum of anxiety — I can't fully let go even when there's no reason", type: "S" },
-    { text: "I settle in — my body knows the week can wait", type: "V" },
+    { text: "I start mentally preparing for the week. I can't help it.", type: "S" },
+    { text: "I feel flat. Weekends and weekdays feel the same.", type: "D" },
+    { text: "A low hum of anxiety. I can't fully let go even when there's no reason.", type: "S" },
+    { text: "I settle in. My body knows the week can wait.", type: "V" },
   ]},
-  { dim: "alertness", text: "Do you know how to stop — not just pause between tasks, but actually stop?", options: [
-    { text: "I stop when I collapse — but that's not the same thing, is it", type: "D" },
-    { text: "Yes — I can be still and it feels natural", type: "V" },
-    { text: "I fill every gap — if I'm not doing something productive I feel guilty or anxious", type: "S" },
-    { text: "I've built my entire identity around being in motion — stopping feels like disappearing", type: "S" },
+  { dim: "alertness", text: "Do you know how to stop? Not just pause between tasks, but actually stop?", options: [
+    { text: "I stop when I collapse. But that's not the same thing, is it.", type: "D" },
+    { text: "Yes. I can be still and it feels natural.", type: "V" },
+    { text: "I fill every gap. If I'm not doing something productive I feel guilty or anxious.", type: "S" },
+    { text: "I've built my entire identity around being in motion. Stopping feels like disappearing.", type: "S" },
   ]},
-  { dim: "sensitivity", text: "When was the last time something beautiful stopped you — not just caught your eye, but moved something in your body?", options: [
-    { text: "I notice beauty but it stays in my head — I think \"that's beautiful\" without feeling it", type: "M" },
-    { text: "I can't remember — I see beautiful things but nothing moves inside", type: "D" },
-    { text: "This week — beauty still reaches me physically", type: "V" },
-    { text: "Only in rare, unexpected moments — and it almost hurts when it does", type: "D" },
+  { dim: "sensitivity", text: "When was the last time something beautiful stopped you? Not just caught your eye, but moved something in your body?", options: [
+    { text: "I notice beauty but it stays in my head. I think \"that's beautiful\" without feeling it", type: "M" },
+    { text: "I can't remember. I see beautiful things but nothing moves inside.", type: "D" },
+    { text: "This week. Beauty still reaches me physically.", type: "V" },
+    { text: "Only in rare, unexpected moments. And it almost hurts when it does.", type: "D" },
   ]},
-  { dim: "sensitivity", text: "There's a version of you that used to feel everything — people, places, beauty, energy. Is she still there?", options: [
+  { dim: "sensitivity", text: "There's a version of you that used to feel everything. People, places, beauty, energy. Is she still there?", options: [
     { text: "I think I buried her to get through the last few years", type: "D" },
-    { text: "She's there but quieter — I feel her in rare moments", type: "M" },
-    { text: "Yes — she's fully here, maybe even stronger than before", type: "V" },
-    { text: "I'm not sure she existed — or I've forgotten what that felt like", type: "D" },
+    { text: "She's there but quieter. I feel her in rare moments.", type: "M" },
+    { text: "Yes. She's fully here, maybe even stronger than before.", type: "V" },
+    { text: "I'm not sure she existed. Or I've forgotten what that felt like.", type: "D" },
   ]},
   { dim: "vitality", text: "If your body could talk, what would it ask you for right now?", options: [
-    { text: "To be heard — it's been sending signals and I keep ignoring them", type: "S" },
-    { text: "Rest — real rest, not just stopping", type: "D" },
-    { text: "I don't know — we haven't been in conversation for a long time", type: "D" },
-    { text: "Pleasure — touch, warmth, beauty, slowness", type: "V" },
+    { text: "To be heard. It's been sending signals and I keep ignoring them.", type: "S" },
+    { text: "Rest. Real rest, not just stopping.", type: "D" },
+    { text: "I don't know. We haven't been in conversation for a long time.", type: "D" },
+    { text: "Pleasure. Touch, warmth, beauty, slowness.", type: "V" },
   ]},
-  { dim: "vitality", text: "What restores you more — a full night of sleep or an hour in a place you find beautiful?", options: [
+  { dim: "vitality", text: "What restores you more: a full night of sleep, or an hour in a place you find beautiful?", options: [
     { text: "Honestly? Beauty. An hour by the sea or in a place I love does more than sleep sometimes", type: "V" },
-    { text: "Sleep — always sleep, I'm just so tired", type: "D" },
+    { text: "Sleep. Always sleep, I'm just so tired.", type: "D" },
     { text: "Neither really works anymore", type: "D" },
-    { text: "I've never thought about beauty as something that restores — but now that you ask, maybe", type: "M" },
+    { text: "I've never thought about beauty as something that restores. But now that you ask, maybe.", type: "M" },
   ]},
-  { dim: "alertness", text: "Right now, as you read this — where is your body holding? Not injury. Not pain. The tension that lives there even when nothing is wrong.", options: [
-    { text: "Jaw — I clench without noticing, my face carries everything", type: "S" },
-    { text: "Shoulders and neck — the weight sits there, always", type: "S" },
-    { text: "Stomach or solar plexus — a tightness that never fully releases", type: "S" },
-    { text: "I feel relatively at ease — my body isn't bracing right now", type: "V" },
+  { dim: "alertness", text: "Right now, as you read this. Where is your body holding? Not injury. Not pain. The tension that lives there even when nothing is wrong.", options: [
+    { text: "Jaw. I clench without noticing. My face carries everything.", type: "S" },
+    { text: "Shoulders and neck. The weight sits there, always.", type: "S" },
+    { text: "Stomach or solar plexus. A tightness that never fully releases.", type: "S" },
+    { text: "I feel relatively at ease. My body isn't bracing right now.", type: "V" },
   ]},
-  { dim: "connection", text: "Be honest — when you're with the people you love most, how much of you is actually in the room?", options: [
-    { text: "I perform presence — I say the right things, I smile, but inside I'm far away", type: "M" },
-    { text: "I've noticed them stopping to try to reach me — and that scares me more than I admit", type: "D" },
-    { text: "My body is there but my mind is somewhere else — work, plans, the next thing", type: "S" },
-    { text: "Most of me — I'm present, I feel them, I'm there", type: "V" },
+  { dim: "connection", text: "Be honest. When you're with the people you love most, how much of you is actually in the room?", options: [
+    { text: "I perform presence. I say the right things, I smile, but inside I'm far away.", type: "M" },
+    { text: "I've noticed them stopping to try to reach me. And that scares me more than I admit.", type: "D" },
+    { text: "My body is there but my mind is somewhere else. Work, plans, the next thing.", type: "S" },
+    { text: "Most of me. I'm present, I feel them, I'm there.", type: "V" },
   ]},
-  { dim: "connection", text: "If you're honest with yourself right now — do you know what you need?", options: [
-    { text: "Yes — I feel it clearly, even if I can't always get it", type: "V" },
-    { text: "I used to — now I organize my life around what others need from me", type: "S" },
-    { text: "No — I've been so focused on functioning that I've lost track of my own needs entirely", type: "D" },
-    { text: "I know what I need to do — but that's different from knowing what I need to feel", type: "M" },
+  { dim: "connection", text: "If you're honest with yourself right now, do you know what you need?", options: [
+    { text: "Yes. I feel it clearly, even if I can't always get it.", type: "V" },
+    { text: "I used to. Now I organize my life around what others need from me.", type: "S" },
+    { text: "No. I've been so focused on functioning that I've lost track of my own needs entirely.", type: "D" },
+    { text: "I know what I need to do. But that's different from knowing what I need to feel.", type: "M" },
   ]},
   { dim: "performance", text: "How do you feel about your success right now?", options: [
-    { text: "Proud but tired — I earned this but the price keeps going up", type: "M" },
-    { text: "Proud and grounded — it reflects something real in me", type: "V" },
-    { text: "Trapped — my success has become a cage I built myself", type: "S" },
-    { text: "Empty — I achieved what I set out to achieve and it doesn't feel like I thought it would", type: "D" },
+    { text: "Proud but tired. I earned this but the price keeps going up.", type: "M" },
+    { text: "Proud and grounded. It reflects something real in me.", type: "V" },
+    { text: "Trapped. My success has become a cage I built myself.", type: "S" },
+    { text: "Empty. I achieved what I set out to achieve and it doesn't feel like I thought it would.", type: "D" },
   ]},
-  { dim: "aliveness", text: "When you encounter something truly beautiful — not just pleasant, but beautiful in a way that feels almost sacred — does it give you hope?", options: [
-    { text: "I feel a flash of something but it turns to sadness quickly — like seeing a window I can't open", type: "M" },
-    { text: "I don't encounter things that feel sacred anymore — my world has become very functional", type: "D" },
-    { text: "Yes — beauty reminds me that there's something larger than my daily life", type: "V" },
-    { text: "It used to — now beauty feels like it belongs to a world I've been locked out of", type: "D" },
+  { dim: "aliveness", text: "When you encounter something truly beautiful, not just pleasant, but beautiful in a way that moves something deep, does it give you hope?", options: [
+    { text: "I feel a flash of something but it turns to sadness quickly, like seeing something I can't reach", type: "M" },
+    { text: "I don't encounter things that feel sacred anymore. My world has become very functional.", type: "D" },
+    { text: "Yes. Beauty reminds me that there's something larger than my daily life.", type: "V" },
+    { text: "It used to. Now beauty feels like it belongs to a world I've been locked out of.", type: "D" },
   ]},
 ];
 
