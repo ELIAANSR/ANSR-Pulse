@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
- 
+
 /* ═══════════════════════════════════════════
    ANSR PULSE — Free Version
    ELIA · Beauty That Heals
@@ -16,7 +16,7 @@ import { useState, useEffect, useCallback } from "react";
      UNCHANGED — dark theme stays for assessment experience
    - Scoring algorithm: UNCHANGED — DO NOT MODIFY
    ═══════════════════════════════════════════ */
- 
+
 // ── Design Tokens ──
 const T = {
   bg: "#1A1714",
@@ -41,7 +41,7 @@ const T = {
     ui: "'DM Sans', sans-serif",
   },
 };
- 
+
 // ── Results Page Light Theme Tokens ──
 const R = {
   bg: "#FAF5EE",              // Warm ivory — Assouline / Aman
@@ -56,7 +56,7 @@ const R = {
   border: "rgba(44,44,44,0.10)",
   borderAccent: "rgba(176,125,98,0.25)",
 };
- 
+
 // ── Dimension Definitions ──
 const DIMENSIONS = [
   { key: "alertness", label: "Alertness", desc: "Is your system stuck in survival mode?" },
@@ -66,7 +66,7 @@ const DIMENSIONS = [
   { key: "performance", label: "Performance", desc: "What is your work costing you?" },
   { key: "aliveness", label: "Aliveness", desc: "Are you still connected to who you are?" },
 ];
- 
+
 // ── Score Bands ──
 function getBand(score) {
   if (score <= 2.5) return { label: "Contracted", color: "#8B5E4B", colorLight: "#A0674F" };
@@ -74,7 +74,7 @@ function getBand(score) {
   if (score <= 7.5) return { label: "Emerging", color: "#7A8B6B", colorLight: "#6B8B5C" };
   return { label: "Open", color: "#5B8B6A", colorLight: "#4A7D5A" };
 }
- 
+
 // ── Dimension Insights ──
 const INSIGHTS = {
   alertness: {
@@ -114,7 +114,7 @@ const INSIGHTS = {
     Open: "You're connected to who you are, what you want, and why it matters. Beauty is part of your life, not separate from it.",
   },
 };
- 
+
 // ── Questions (UNCHANGED) ──
 const QUESTIONS = [
   { dim: "alertness", text: "It's Sunday evening. What happens in your body?", options: [
@@ -184,10 +184,10 @@ const QUESTIONS = [
     { text: "It used to — now beauty feels like it belongs to a world I've been locked out of", type: "D" },
   ]},
 ];
- 
+
 // ── Score Calculation (UNCHANGED) ──
 const SCORE_MAP = { V: 3, M: 1.5, S: 1, D: 0.5 };
- 
+
 function calcScores(answers) {
   const raw = {};
   const questionCount = {};
@@ -204,38 +204,38 @@ function calcScores(answers) {
   });
   return scores;
 }
- 
+
 // ── Profile Definitions (descriptions trimmed to 2 paragraphs for results page) ──
 const PROFILES = {
   sunfire: { key: "sunfire", name: "Sunfire", tagline: "Burning bright — and burning through.",
-    description: "Everything about you burns bright. Your energy, your pace, your capacity to hold a room, carry a team, close a deal, solve a crisis — it's extraordinary. People look at you and see someone who has it all figured out. They marvel at what you carry.\n\nWhat they don't see: you can't stop. Not because you don't want to — because your system doesn't know another speed. Your nervous system has been running in activation mode for so long that intensity is the only state it trusts.",
-    hope: "Here's what I want you to know: the fact that you're reading this means something in you paused. Even for a moment. That pause — that tiny interruption in the relentless forward motion — is more significant than you think. You have an extraordinary engine. What you need isn't to be fixed. You need to discover that the same intensity that drives your success can be turned toward beauty, toward feeling, toward the life that's been waiting on the other side of the pushing.",
+    description: "Everything about you burns bright. Your energy, your pace, your capacity to hold a room, carry a team, close a deal, solve a crisis. It's extraordinary. People look at you and see someone who has it all figured out. They marvel at what you carry.\n\nWhat they don't see: you can't stop. It's not that you don't want to. Your system genuinely doesn't know another speed. Your nervous system has been running in activation mode for so long that intensity is the only state it trusts.",
+    hope: "The fact that you're reading this means something in you paused. Even for a moment. That pause matters more than you think. What your body is actually asking for, and why stillness feels dangerous instead of restful, is what the six dimensions underneath this pattern reveal.",
     color: "#D4845A" },
   velvetblade: { key: "velvetblade", name: "Velvet Blade", tagline: "Elegant and dangerous. The danger is to yourself.",
     description: "You've built something remarkable: a version of you that is composed, graceful under pressure, impeccable in every visible way. People admire your control. They trust your steadiness. They have no idea what it costs.\n\nBecause the elegance became the armour. The composure became the cage. Somewhere along the way, the polished exterior stopped being a choice and became the only version of you that exists.",
-    hope: "Nobody in your world says this to you because you look like you don't need it: the composure is real — but so is the woman underneath it. She's not weak. She's the strongest part of you. And when she's finally safe enough to come forward, everything changes. Not your competence — that stays. What changes is the depth. The pleasure. The feeling of being alive inside the life you built, not just performing it beautifully.",
+    hope: "Nobody in your world says this to you because you look like you don't need it: the composure is real, but so is the woman underneath it. What the composure is actually costing you, and where your system is paying the price, is mapped across six dimensions that this Pulse can only point toward.",
     color: "#9B7A8F" },
   eclipse: { key: "eclipse", name: "Eclipse", tagline: "The light didn't leave. Something moved in front of it.",
-    description: "Something bright has been covered over. Not destroyed — blocked. You're still there. Your intelligence, your depth, your capacity — all of it exists. But there's something between you and the world. A veil. A distance.\n\nYou function. You deliver. You show up. But the experience of being alive has gone flat. Food doesn't taste the way it used to. Weekends feel the same as weekdays. You're not sad, exactly. You're not anything, exactly. That's the problem.",
-    hope: "I know this might feel like the hardest profile to receive. But I want to tell you something: the fact that you took this assessment — that you clicked, that you answered honestly, that you're reading these words right now — means the eclipse is already shifting. You didn't come here because you've given up. You came because something in you is still looking. Still hoping. Still reaching for something that makes sense of the flatness.",
+    description: "Something bright has been covered over. Not destroyed, but blocked. You're still there. Your intelligence, your depth, your capacity. All of it exists. But there's something between you and the world. A veil. A distance.\n\nYou function. You deliver. You show up. But the experience of being alive has gone flat. Food doesn't taste the way it used to. Weekends feel the same as weekdays. You are not sad, exactly. You are not anything, exactly. That's the problem.",
+    hope: "The fact that you took this assessment means the eclipse is already shifting. You didn't come here because you've given up. You came because something in you is still looking. What your system turned off, and in what order, is the map that changes what you do next.",
     color: "#6B7A8B" },
   summerstorm: { key: "summerstorm", name: "Summer Storm", tagline: "You feel everything. That's not the problem.",
-    description: "You feel everything. You walk into a room and absorb it — the tension, the beauty, the unspoken things, the energy. You always have. It's your gift. It's also what's overwhelming you.\n\nSensitivity without support is not a superpower. It's a flood. Your system takes in more than it can process. Emotions hit hard and fast. Other people's pain lands in your body. Beauty reaches you — sometimes so intensely it aches.",
-    hope: "You need to hear this: your sensitivity is not your problem. It never was. The world told you it was too much. Your career punished you for it. So you tried to turn it down. But here's what nobody else will tell you — your sensitivity is the rarest thing in any room you walk into. It's the reason people trust you without knowing why. It's the reason beauty reaches you when others walk past it.",
+    description: "You feel everything. You walk into a room and absorb it: the tension, the beauty, the unspoken things, the energy. You always have. It's your gift. It's also what's overwhelming you.\n\nSensitivity without a container isn't a superpower. It's a flood. Your system takes in more than it can process. Emotions hit hard and fast. Other people's pain lands in your body. Beauty reaches you, sometimes so intensely it aches.",
+    hope: "You need to hear this: your sensitivity is not your problem. It never was. But sensitivity without a container will keep flooding you. What kind of container YOUR specific system needs is what the full Profile maps.",
     color: "#8B6B5C" },
   heartwood: { key: "heartwood", name: "Heartwood", tagline: "The one who holds everything up. The one nobody thinks to check on.",
-    description: "The innermost part of the tree. The densest, strongest wood — the part that holds everything up. Nobody sees it. Nobody thinks to check on it. But without it, the whole structure falls.\n\nThat's you. In your family. In your company. In your friendships. You're the one who holds. Who organises, carries, shows up, remembers, takes care of. You make beautiful spaces for others. Beautiful experiences for others.",
-    hope: "You have given so much to so many people. And you did it with grace, without complaint, without asking for anything in return. I want you to know that I see that. That what you've carried is extraordinary. And that the generosity that defines you is not something you need to lose — it's something you need to finally turn inward.",
+    description: "The innermost part of the tree. The densest, strongest wood, the part that holds everything up. Nobody sees it. Nobody checks on it. But without it, the whole structure falls.\n\nThat's you. In your family, in your company, in your friendships. You're the one who holds. Who organises, carries, shows up, remembers, takes care of. You make beautiful spaces for others. Beautiful experiences for others.",
+    hope: "You've given so much to so many people. I want you to know that I see that. What I also see, and what this Pulse can only begin to show, is where the giving is drawing from and what it's costing underneath.",
     color: "#7A8B5B" },
   newmoon: { key: "newmoon", name: "New Moon", tagline: "Invisible — but already pulling the tide.",
     taglineHigh: "You are what most women in leadership are searching for.",
-    description: "Something shifted in you — maybe recently, maybe it's been building. You can feel it. Not a dramatic change. More like a direction. A quiet knowing that the way you've been living isn't the way you want to keep living.\n\nYou're not healed. You're not \"there.\" But you're aware in a way you weren't before. You've started asking questions you'd stopped asking: what do I want? Who am I outside of what I do?",
+    description: "Something shifted in you, maybe recently, maybe it's been building. You can feel it. Not a dramatic change. More like a direction. A quiet knowing that the way you've been living isn't the way you want to keep living.\n\nYou're not healed. You're not \"there.\" But you're aware in a way you weren't before. You've started asking questions you'd stopped asking: what do I want? Who am I outside of what I do?",
     descriptionHigh: "Your results are rare. Genuinely rare.\n\nMcKinsey data shows that 61% of women in management and executive positions report operating under sustained pressure that compromises their health and relationships. Most of your peers are operating in survival mode — bracing, pushing, performing, depleting. You're not.",
-    hope: "You are at the beginning of something and you can feel it. That feeling — that restless, tender, uncertain stirring — is not confusion. It's your nervous system waking up. It's your body remembering that there's more available to you than what you've been settling for.",
+    hope: "You're at the beginning of something and you can feel it. That stirring isn't confusion. It's your nervous system waking up. What it's waking up toward, and how to protect it while it's still fragile, is what the six dimensions reveal.",
     hopeHigh: "I want you to hear this clearly: what you have is not normal. Not among the women I work with. Not among the leaders I've sat across from for the past decade. Most of them are magnificent and depleted. You're magnificent and present. That's a different thing entirely.",
     color: "#5B7A7A" },
 };
- 
+
 // ── Profile Assignment (UNCHANGED — DO NOT MODIFY) ──
 function assignProfile(scores) {
   const dims = DIMENSIONS.map((d) => ({ key: d.key, score: scores[d.key] }));
@@ -251,7 +251,7 @@ function assignProfile(scores) {
   const open = dims.filter((d) => d.score > 7.5).length;
   const hasSpike = highest.score >= 7;
   const anyLow = dims.some((d) => d.score <= 5);
- 
+
   if (range < 1.0) {
     if (avg >= 7) return PROFILES.newmoon;
     if (avg <= 4) return PROFILES.eclipse;
@@ -264,14 +264,14 @@ function assignProfile(scores) {
     return PROFILES.eclipse;
   }
   if (contracted >= 4 && !hasSpike) return PROFILES.eclipse;
- 
+
   const isEclipse = ((scores.sensitivity <= 3 && scores.vitality <= 3.5 && scores.performance <= 5 && scores.connection <= 4.5 && !hasSpike) || (avg <= 3.5 && contracted >= 2 && scores.performance <= 5 && !hasSpike && range <= 3));
   const isSummerStorm = (scores.sensitivity >= 7 && scores.sensitivity >= avg + 1.5 && scores.sensitivity === highest.score && anyLow);
   const isSunfire = (scores.alertness <= 3.5 && scores.alertness <= scores.performance && (scores.vitality <= 5 || scores.alertness <= 2.5) && avg <= 5.5);
   const isVelvetBlade = ((scores.sensitivity <= 4.5 && scores.alertness >= 2.5 && scores.sensitivity <= avg && scores.sensitivity <= scores.connection) || (scores.sensitivity <= 2.5 && scores.sensitivity === lowest.score));
   const isHeartwood = ((scores.connection <= 5 && scores.aliveness <= 5 && scores.connection <= scores.sensitivity && !isEclipse) || (scores.connection <= 3.5 && !isEclipse) || (lowest.key === "connection" && scores.connection <= avg - 2 && !isEclipse));
   const isNewMoon = (avg > 5 && avg < 8.5 && spread >= 1.5 && range >= 3.5 && (emerging + open) >= 2);
- 
+
   if (isEclipse) return PROFILES.eclipse;
   if (isSummerStorm && isHeartwood) { if (scores.sensitivity >= 8) return PROFILES.summerstorm; if (scores.connection <= avg - 3) return PROFILES.heartwood; return PROFILES.summerstorm; }
   if (isSummerStorm) return PROFILES.summerstorm;
@@ -280,12 +280,12 @@ function assignProfile(scores) {
   if (isHeartwood) return PROFILES.heartwood;
   if (isSunfire) return PROFILES.sunfire;
   if (isNewMoon) return PROFILES.newmoon;
- 
+
   if (avg <= 5.5) { const fb = {alertness:"sunfire",sensitivity:"velvetblade",connection:"heartwood",vitality:"eclipse",aliveness:"heartwood",performance:"velvetblade"}; return PROFILES[fb[lowest.key] || "newmoon"]; }
   if (avg > 5) { if (lowest.score > 5) return PROFILES.newmoon; const fb = {alertness:"sunfire",sensitivity:"velvetblade",connection:"heartwood",aliveness:"heartwood",vitality:"sunfire",performance:"velvetblade"}; return PROFILES[fb[lowest.key] || "newmoon"]; }
   return PROFILES.newmoon;
 }
- 
+
 function getSecondaryProfile(scores, primaryKey) {
   const profileScores = {};
   const avg = Object.values(scores).reduce((s, v) => s + v, 0) / 6;
@@ -301,7 +301,7 @@ function getSecondaryProfile(scores, primaryKey) {
   const sorted = Object.entries(profileScores).sort((a, b) => b[1] - a[1]);
   return PROFILES[sorted[0][0]];
 }
- 
+
 // ── Radar Chart (LIGHT VERSION for results page) ──
 function RadarChart({ scores, size = 260, profileColor, light = false, secondaryColor = null }) {
   const cx = size / 2;
@@ -313,11 +313,11 @@ function RadarChart({ scores, size = 260, profileColor, light = false, secondary
     const dist = (val / max) * r;
     return { x: cx + dist * Math.cos(angle), y: cy + dist * Math.sin(angle) };
   };
- 
+
   const gridStroke = light ? "rgba(44,44,44,0.10)" : "rgba(255,255,255,0.09)";
   const gridStrokeOuter = light ? "rgba(44,44,44,0.18)" : "rgba(255,255,255,0.2)";
   const labelColor = light ? R.text : T.text;
- 
+
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ overflow: "visible" }}>
       {[2.5, 5, 7.5, 10].map((level) => {
@@ -353,16 +353,16 @@ function RadarChart({ scores, size = 260, profileColor, light = false, secondary
     </svg>
   );
 }
- 
+
 // ── Fade Wrapper ──
 function Fade({ children, dep }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { setVis(false); const t = setTimeout(() => setVis(true), 60); return () => clearTimeout(t); }, [dep]);
   return (<div style={{ opacity: vis ? 1 : 0, transition: "opacity 0.5s ease", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>{children}</div>);
 }
- 
+
 // ── Assessment Screens (ALL UNCHANGED — dark theme) ──
- 
+
 function IntroScreen({ onStart }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { setTimeout(() => setVis(true), 50); }, []);
@@ -383,7 +383,7 @@ function IntroScreen({ onStart }) {
     </div>
   );
 }
- 
+
 function SettleScreen({ onReady }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { setTimeout(() => setVis(true), 300); }, []);
@@ -400,7 +400,7 @@ function SettleScreen({ onReady }) {
     </div>
   );
 }
- 
+
 function QuestionScreen({ question, index, total, onAnswer, onBack }) {
   const [selected, setSelected] = useState(null);
   const handleSelect = (opt, i) => { setSelected(i); setTimeout(() => { setSelected(null); onAnswer(opt); }, 500); };
@@ -433,7 +433,7 @@ function QuestionScreen({ question, index, total, onAnswer, onBack }) {
     </Fade>
   );
 }
- 
+
 function EmailScreen({ onSubmit }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -461,7 +461,7 @@ function EmailScreen({ onSubmit }) {
     </div>
   );
 }
- 
+
 function BreathingScreen({ onComplete }) {
   const [vis, setVis] = useState(false);
   const [pulse, setPulse] = useState(false);
@@ -478,39 +478,39 @@ function BreathingScreen({ onComplete }) {
     </div>
   );
 }
- 
- 
+
+
 // ══════════════════════════════════════════════════════════════
 // RESULTS SCREEN — FINAL LOCKED VERSION
 // Light theme. Single CTA. Profile €97.
 // ══════════════════════════════════════════════════════════════
- 
+
 function ResultsScreen({ scores, profile, secondary, userName }) {
   const [vis, setVis] = useState(false);
   useEffect(() => { setTimeout(() => setVis(true), 300); }, []);
- 
+
   const dims = DIMENSIONS.map((d) => ({
     ...d, score: scores[d.key], band: getBand(scores[d.key]),
     insight: INSIGHTS[d.key][getBand(scores[d.key]).label],
   }));
- 
+
   const dimsSorted = [...dims].sort((a, b) => b.score - a.score);
   const topDims = dimsSorted.slice(0, 2);
   const lowestDim = dimsSorted[dimsSorted.length - 1];
   // 3 locked dims = everything except top 2 and lowest
   const lockedDims = dimsSorted.filter(d => !topDims.includes(d) && d.key !== lowestDim.key).slice(0, 3);
- 
+
   const avg = dims.reduce((s, d) => s + d.score, 0) / dims.length;
   const isHighScorer = profile.key === "newmoon" && avg >= 7.5;
- 
+
   const displayTagline = isHighScorer && profile.taglineHigh ? profile.taglineHigh : profile.tagline;
   const displayDescription = isHighScorer && profile.descriptionHigh ? profile.descriptionHigh : profile.description;
   const displayHope = isHighScorer && profile.hopeHigh ? profile.hopeHigh : profile.hope;
- 
+
   const descParagraphs = displayDescription.split("\n\n").slice(0, 2);
   const hopeSentences = displayHope.split('. ');
   const shortHope = hopeSentences.slice(0, 3).join('. ') + (hopeSentences.length > 3 ? '.' : '');
- 
+
   // ── VIDEO EMBED URLs ──
   const VIDEO_URLS = {
     sunfire: "https://iframe.mediadelivery.net/embed/628520/9044733f-29c2-441a-8213-d5b9f999918e",
@@ -521,38 +521,38 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
     newmoon: "https://iframe.mediadelivery.net/embed/628520/df7df249-c692-4624-8ae6-babf14a3ec46",
   };
   const videoUrl = VIDEO_URLS[profile.key];
- 
+
   const ctaUrl = `https://ansr-profile.vercel.app?p=${profile.key}${secondary ? '&u=' + secondary.key : ''}`;
- 
+
   return (
     <div style={{ opacity: vis ? 1 : 0, transition: "opacity 1s ease",
       background: R.bg, minHeight: "100vh",
       padding: "48px 24px 80px", maxWidth: 580, margin: "0 auto" }}>
- 
+
       {/* ── Profile name + tagline ── */}
       <div style={{ textAlign: "center", marginBottom: 32 }}>
         <p style={{ fontFamily: T.fonts.display, fontSize: 24, fontWeight: 400, color: R.text,
           letterSpacing: "0.3em", marginBottom: 20 }}>ELIA</p>
- 
+
         <p style={{ fontFamily: T.fonts.ui, fontSize: 11, color: R.accent,
           letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 28 }}>
           Your ANSR Pulse Signature</p>
- 
+
         <h1 style={{ fontFamily: T.fonts.display, fontSize: "clamp(36px, 8vw, 52px)",
           fontWeight: 300, color: R.text, letterSpacing: "0.04em", marginBottom: 14 }}>
           {profile.name}</h1>
- 
+
         <p style={{ fontFamily: T.fonts.body, fontSize: 19, color: R.accent,
           fontStyle: "italic", lineHeight: 1.6, marginBottom: 48 }}>
           {displayTagline}</p>
- 
+
         <div style={{ width: 30, height: 1, background: R.accent, margin: "0 auto 28px", opacity: 0.25 }} />
- 
+
         <p style={{ fontFamily: T.fonts.ui, fontSize: 11, color: R.textMuted,
           letterSpacing: "0.06em", lineHeight: 1.6 }}>
           Built on research from Stanford, UCL, Max Planck Institute,<br />and the Polyvagal Institute.</p>
       </div>
- 
+
       {/* ── Video ── */}
       <div style={{ marginBottom: 36 }}>
         {videoUrl ? (
@@ -575,7 +575,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           </div>
         )}
       </div>
- 
+
       {/* ── Description (2 paragraphs) ── */}
       <div style={{ marginBottom: 32 }}>
         {descParagraphs.map((p, i) => (
@@ -583,20 +583,20 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
             lineHeight: 1.85, marginBottom: 16 }}>{p}</p>
         ))}
       </div>
- 
+
       {/* ── Hope quote — emotional peak ── */}
       <div style={{ marginBottom: 36, borderLeft: `2px solid ${profile.color}`, paddingLeft: 20 }}>
         <p style={{ fontFamily: T.fonts.body, fontSize: 16, color: R.text,
           lineHeight: 1.9, fontStyle: "italic" }}>{shortHope}</p>
       </div>
- 
+
       {/* ── SINGLE CTA — Profile €97 ── */}
       <div style={{ background: R.accentGlow, border: `1px solid ${R.borderAccent}`,
         padding: "32px 24px", textAlign: "center", marginBottom: 8, borderRadius: 4 }}>
         <p style={{ fontFamily: T.fonts.display, fontSize: 21, fontWeight: 300,
           color: R.text, marginBottom: 6 }}>Your Pulse named the pattern.</p>
         <p style={{ fontFamily: T.fonts.display, fontSize: 21, fontWeight: 300,
-          color: R.accent, marginBottom: 24 }}>Your Profile maps the six dimensions underneath it.</p>
+          color: R.accent, marginBottom: 24 }}>Your Profile shows you what it's costing and where to start.</p>
         <a href={ctaUrl} target="_blank" rel="noopener noreferrer" style={{
           display: "inline-block", fontFamily: T.fonts.display, fontSize: 15,
           letterSpacing: "0.12em", textTransform: "uppercase",
@@ -608,20 +608,20 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           Your full ANSR Profile — €97
         </a>
         <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: R.textDim,
-          marginTop: 12 }}>Instant PDF · 14 pages · 12 minutes</p>
+          marginTop: 12 }}>Instant PDF · 14 pages · Takes 12 minutes</p>
       </div>
- 
+
       <p style={{ fontFamily: T.fonts.ui, fontSize: 12, color: R.accent,
         textAlign: "center", marginBottom: 40, letterSpacing: "0.06em", lineHeight: 1.7, fontWeight: 500 }}>
         Developed for senior leaders and founders<br />in luxury, finance, art, law, and architecture.</p>
- 
+
       {/* ── Divider ── */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, margin: "0 0 40px" }}>
         <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${R.border})` }} />
         <div style={{ width: 4, height: 4, background: R.accent, transform: "rotate(45deg)", opacity: 0.4 }} />
         <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${R.border}, transparent)` }} />
       </div>
- 
+
       {/* ── Radar Chart ── */}
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 40 }}>
         <p style={{ fontFamily: T.fonts.ui, fontSize: 11, color: R.accent,
@@ -644,13 +644,13 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           )}
         </div>
       </div>
- 
+
       {/* ── Top 2 dimensions — full insight ── */}
       <div style={{ marginBottom: 20 }}>
         <p style={{ fontFamily: T.fonts.ui, fontSize: 11, color: R.accent,
           letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 20 }}>
           Your two strongest dimensions</p>
- 
+
         {topDims.map((d) => (
           <div key={d.key} style={{ marginBottom: 22, paddingBottom: 22,
             borderBottom: `1px solid ${R.border}` }}>
@@ -671,7 +671,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           </div>
         ))}
       </div>
- 
+
       {/* ── Lowest dimension — highlighted, tension ── */}
       <div style={{ marginBottom: 24, padding: "20px 18px",
         border: `1px solid ${R.borderAccent}`, borderRadius: 4, background: R.accentGlow }}>
@@ -687,9 +687,9 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         </div>
         <p style={{ fontFamily: T.fonts.body, fontSize: 14, color: R.accent,
           fontStyle: "italic", lineHeight: 1.7 }}>
-          This is where your system is paying the highest price. What it means — and what to do about it — is in your full Profile.</p>
+          This is where your system is paying the highest price. Your full Profile maps what this score means for your sleep, your relationships, and the decisions sitting in front of you right now.</p>
       </div>
- 
+
       {/* ── 3 locked dimensions — number + lock only ── */}
       <div style={{ marginBottom: 36, opacity: 0.65 }}>
         {lockedDims.map((d) => (
@@ -709,9 +709,9 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
         ))}
         <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: R.textDim,
           fontStyle: "italic", marginTop: 8, textAlign: "center" }}>
-          Unlocked in your full ANSR Profile</p>
+          What these dimensions reveal about your pattern → full Profile</p>
       </div>
- 
+
       {/* ── Secondary profile — one line ── */}
       {secondary && (
         <div style={{ marginBottom: 40 }}>
@@ -720,10 +720,10 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
             <span style={{ fontFamily: T.fonts.body, fontSize: 13, color: R.textMuted, fontStyle: "italic" }}>undertone</span>
           </div>
           <p style={{ fontFamily: T.fonts.body, fontSize: 14, color: R.textMuted, lineHeight: 1.7 }}>
-            How your {profile.name} and {secondary.name} interact — and what that means for you — is in your full ANSR Profile.</p>
+            How your {profile.name} and {secondary.name} interact changes how you crash, how you recover, and what actually restores you. That map is in your full Profile.</p>
         </div>
       )}
- 
+
       {/* ── Six profiles list ── */}
       <div style={{ marginBottom: 40 }}>
         <p style={{ fontFamily: T.fonts.ui, fontSize: 11, color: R.accent,
@@ -759,7 +759,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           );
         })})()}
       </div>
- 
+
       {/* ── Share ── */}
       <div style={{ textAlign: "center", marginBottom: 32 }}>
         <p style={{ fontFamily: T.fonts.body, fontSize: 15, color: R.textMuted,
@@ -774,7 +774,7 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           Copy link to send her
         </button>
       </div>
- 
+
       {/* ── Dark footer section ── */}
       <div style={{ background: T.bg, margin: "0 -24px", padding: "40px 24px 80px", textAlign: "center" }}>
         <p style={{ fontFamily: T.fonts.display, fontSize: 24, fontWeight: 400, color: T.text,
@@ -783,17 +783,17 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           letterSpacing: "0.1em", marginBottom: 24, fontStyle: "italic" }}>Beauty That Heals</p>
         
         <div style={{ width: 40, height: 1, background: T.accent, margin: "0 auto 24px", opacity: 0.3 }} />
- 
+
         <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textMuted, lineHeight: 1.8, marginBottom: 20 }}>
           ANSR™ — Aesthetic Nervous System Regulation<br />
           Developed for senior leaders and founders in luxury, finance, art, law, and architecture.</p>
- 
+
         <p style={{ fontFamily: T.fonts.body, fontSize: 11, color: T.textDim, lineHeight: 1.7 }}>
           © ELIA / Uskale SA · All rights reserved<br />
           This assessment is for personal development purposes and does not constitute medical diagnosis.
         </p>
       </div>
- 
+
       {/* ── Sticky CTA — single ── */}
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0,
         background: `linear-gradient(transparent, ${R.bg}F0 20%, ${R.bg} 40%)`,
@@ -809,13 +809,13 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
           Your full ANSR Profile — €97
         </a>
       </div>
- 
+
       <div style={{ height: 60 }} />
     </div>
   );
 }
- 
- 
+
+
 // ── App ──
 export default function ANSRPulse() {
   const [screen, setScreen] = useState("intro");
@@ -825,17 +825,17 @@ export default function ANSRPulse() {
   const [profile, setProfile] = useState(null);
   const [secondary, setSecondary] = useState(null);
   const [userName, setUserName] = useState("");
- 
+
   const handleAnswer = useCallback((opt) => {
     const newAnswers = [...answers, opt];
     setAnswers(newAnswers);
     if (qIndex < QUESTIONS.length - 1) { setQIndex(qIndex + 1); } else { setScreen("breathing"); }
   }, [answers, qIndex]);
- 
+
   const handleBack = useCallback(() => {
     if (qIndex > 0) { setAnswers(answers.slice(0, -1)); setQIndex(qIndex - 1); }
   }, [answers, qIndex]);
- 
+
   const handleEmail = useCallback((name, email) => {
     setUserName(name);
     try {
@@ -855,16 +855,16 @@ export default function ANSRPulse() {
     setScreen("results");
     window.scrollTo(0, 0);
   }, [answers]);
- 
+
   // The app background switches to light when showing results
   const isResults = screen === "results" && scores && profile;
- 
+
   return (
     <div style={{ background: isResults ? R.bg : T.bg, minHeight: "100vh", color: isResults ? R.text : T.text, position: "relative", transition: "background 0.8s ease" }}>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
- 
+
       {/* Background textures — only show on dark screens */}
       {!isResults && (
         <>
@@ -875,7 +875,7 @@ export default function ANSRPulse() {
             background: "radial-gradient(ellipse at 30% 40%, rgba(196,137,106,0.04) 0%, transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(91,122,122,0.03) 0%, transparent 50%)", zIndex: 0 }} />
         </>
       )}
- 
+
       <div style={{ position: "relative", zIndex: 1 }}>
         {screen === "intro" && <IntroScreen onStart={() => setScreen("settle")} />}
         {screen === "settle" && <SettleScreen onReady={() => setScreen("questions")} />}
@@ -892,4 +892,3 @@ export default function ANSRPulse() {
     </div>
   );
 }
- 
