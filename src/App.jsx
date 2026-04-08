@@ -555,22 +555,26 @@ function ResultsScreen({ scores, profile, secondary, userName }) {
       {/* ── Video ── */}
       <div style={{ marginBottom: 36 }}>
         {videoUrl ? (
-          <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden",
-            borderRadius: 4, border: `1px solid ${R.border}` }}>
-            <iframe src={videoUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
-              allow="autoplay; fullscreen; picture-in-picture" allowFullScreen title={`ANSR ${profile.name}`} />
+          <div style={{ maxWidth: 340, margin: "0 auto" }}>
+            <div style={{ position: "relative", paddingBottom: "177.78%", height: 0, overflow: "hidden",
+              borderRadius: 8, border: `1px solid ${R.border}` }}>
+              <iframe src={videoUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+                allow="autoplay; fullscreen; picture-in-picture" allowFullScreen title={`ANSR ${profile.name}`} />
+            </div>
           </div>
         ) : (
-          <div style={{ aspectRatio: "16/9", background: R.bgAlt, border: `1px solid ${R.border}`,
-            borderRadius: 4, display: "flex", flexDirection: "column", alignItems: "center",
-            justifyContent: "center", gap: 12 }}>
-            <div style={{ width: 48, height: 48, borderRadius: "50%", border: `2px solid ${R.accent}`,
-              display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ width: 0, height: 0, borderTop: "10px solid transparent",
-                borderBottom: "10px solid transparent", borderLeft: `16px solid ${R.accent}`, marginLeft: 4 }} />
+          <div style={{ maxWidth: 340, margin: "0 auto" }}>
+            <div style={{ aspectRatio: "9/16", background: R.bgAlt, border: `1px solid ${R.border}`,
+              borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center",
+              justifyContent: "center", gap: 12 }}>
+              <div style={{ width: 48, height: 48, borderRadius: "50%", border: `2px solid ${R.accent}`,
+                display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: 0, height: 0, borderTop: "10px solid transparent",
+                  borderBottom: "10px solid transparent", borderLeft: `16px solid ${R.accent}`, marginLeft: 4 }} />
+              </div>
+              <p style={{ fontFamily: T.fonts.body, fontSize: 14, color: R.textMuted,
+                fontStyle: "italic" }}>A message from Alexandre about your {profile.name} result</p>
             </div>
-            <p style={{ fontFamily: T.fonts.body, fontSize: 14, color: R.textMuted,
-              fontStyle: "italic" }}>A message from Alexandre about your {profile.name} result</p>
           </div>
         )}
       </div>
