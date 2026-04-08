@@ -36,9 +36,9 @@ const T = {
   warmWhite: "#FAF5EE",
   warmCharcoal: "#3A3530",
   fonts: {
-    display: "'Cormorant Garamond', serif",
-    body: "'EB Garamond', serif",
-    ui: "'DM Sans', sans-serif",
+    display: "'Cormorant Garamond', Georgia, 'Times New Roman', serif",
+    body: "'EB Garamond', Georgia, 'Times New Roman', serif",
+    ui: "'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
   },
 };
 
@@ -365,21 +365,20 @@ function Fade({ children, dep }) {
 
 function IntroScreen({ onStart }) {
   const [vis, setVis] = useState(false);
-  useEffect(() => { setTimeout(() => setVis(true), 50); }, []);
+  useEffect(() => { setTimeout(() => setVis(true), 10); }, []);
   return (
-    <div style={{ opacity: vis ? 1 : 0, transition: "opacity 1.2s ease", textAlign: "center", padding: "80px 24px", maxWidth: 540, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+    <div style={{ opacity: vis ? 1 : 0, transition: "opacity 0.6s ease", textAlign: "center", padding: "80px 24px", maxWidth: 540, margin: "0 auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
       <p style={{ fontFamily: T.fonts.display, fontSize: 28, fontWeight: 400, color: T.text, letterSpacing: "0.35em", marginBottom: 40 }}>ELIA</p>
       <div style={{ width: 40, height: 1, background: T.accent, margin: "0 auto 40px", opacity: 0.6 }} />
-      <div style={{ marginBottom: 8 }}>
+      <div style={{ marginBottom: 48 }}>
         <span style={{ fontFamily: T.fonts.display, fontSize: "clamp(34px, 7vw, 50px)", fontWeight: 300, color: T.text, letterSpacing: "0.07em" }}>ANSR</span>
         <span style={{ fontFamily: T.fonts.display, fontSize: "clamp(16px, 2.5vw, 19px)", color: T.accent, letterSpacing: "0.15em", fontWeight: 300, marginLeft: 14, position: "relative", top: -2 }}>PULSE</span>
       </div>
-      <p style={{ fontFamily: T.fonts.body, fontSize: 13, color: T.text, opacity: 0.6, letterSpacing: "0.1em", marginBottom: 48 }}>Aesthetic Nervous System Regulation</p>
-      <p style={{ fontFamily: T.fonts.body, fontSize: "clamp(17px, 3vw, 20px)", color: T.text, lineHeight: 1.8, marginBottom: 60, fontStyle: "italic", opacity: 0.85 }}>Eleven questions that map what your nervous system<br />has stopped letting you feel.</p>
-      <button onClick={onStart} style={{ fontFamily: T.fonts.display, fontSize: 15, letterSpacing: "0.15em", textTransform: "uppercase", background: "transparent", border: `1px solid ${T.accent}`, color: T.accent, padding: "16px 48px", cursor: "pointer", transition: "all 0.4s ease" }}
-        onMouseEnter={(e) => { e.target.style.background = T.accent; e.target.style.color = T.bg; }}
-        onMouseLeave={(e) => { e.target.style.background = "transparent"; e.target.style.color = T.accent; }}>Begin</button>
-      <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim, marginTop: 36, letterSpacing: "0.06em" }}>2 minutes · Confidential</p>
+      <p style={{ fontFamily: T.fonts.body, fontSize: "clamp(17px, 3vw, 20px)", color: T.text, lineHeight: 1.8, marginBottom: 60, fontStyle: "italic", opacity: 0.85 }}>Eleven questions. Two minutes.<br />A result that shows you what sustained pressure<br />is costing you beneath the performance.</p>
+      <button onClick={onStart} style={{ fontFamily: T.fonts.display, fontSize: 15, letterSpacing: "0.15em", textTransform: "uppercase", background: T.accent, border: "none", color: "#FFFFFF", padding: "16px 48px", cursor: "pointer", transition: "all 0.4s ease", borderRadius: 2 }}
+        onMouseEnter={(e) => { e.target.style.background = T.accentBright; }}
+        onMouseLeave={(e) => { e.target.style.background = T.accent; }}>Begin</button>
+      <p style={{ fontFamily: T.fonts.body, fontSize: 12, color: T.textDim, marginTop: 36, letterSpacing: "0.06em" }}>Confidential</p>
     </div>
   );
 }
