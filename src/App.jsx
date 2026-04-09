@@ -841,20 +841,22 @@ export default function ANSRPulse() {
 
   const handleEmail = useCallback((name, email) => {
     setUserName(name);
+    let primaryProfile = null;
+    let secondaryProfile = null;
     try {
       const s = calcScores(answers);
       setScores(s);
-      const primary = assignProfile(s);
-      setProfile(primary);
-      const sec = getSecondaryProfile(s, primary.key);
-      setSecondary(sec);
+      primaryProfile = assignProfile(s);
+      setProfile(primaryProfile);
+      secondaryProfile = getSecondaryProfile(s, primaryProfile.key);
+      setSecondary(secondaryProfile);
       const resultsUrl = window.location.origin + window.location.pathname;
       fetch("/api/capture", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, profile: primary ? primary.name : "Unknown", secondary: sec ? sec.name : "", tagline: primary ? primary.tagline : "", scores: s, results_url: resultsUrl }),
+        body: JSON.stringify({ name, email, profile: primaryProfile ? primaryProfile.name : "Unknown", secondary: secondaryProfile ? secondaryProfile.name : "", tagline: primaryProfile ? primaryProfile.tagline : "", scores: s, results_url: resultsUrl }),
       }).catch(() => {});
     } catch (err) { console.error("Scoring error:", err); }
-    if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: profile ? profile.name : 'Unknown' });
+    if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: primaryProfile ? primaryProfile.name : 'Unknown' });
     setScreen("results");
     window.scrollTo(0, 0);
   }, [answers]);
@@ -864,9 +866,7 @@ export default function ANSRPulse() {
 
   return (
     <div style={{ background: isResults ? R.bg : T.bg, minHeight: "100vh", color: isResults ? R.text : T.text, position: "relative", transition: "background 0.8s ease" }}>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+      {/* Fonts loaded via index.html for faster first paint */}
 
       {/* Background textures — only show on dark screens */}
       {!isResults && (
