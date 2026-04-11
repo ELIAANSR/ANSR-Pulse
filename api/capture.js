@@ -94,8 +94,7 @@ function buildEmail(data) {
 
   const pulseUrl = "https://ansr-pulse.vercel.app";
 
-  // Build dimension rows — top 4 shown, lowest highlighted, 5th hidden
-  // On ivory background. Low scores in warm terracotta. Lowest gets left border accent.
+  // Build dimension rows
   const ALERT_COLOR = "#C27A5A";
   let dimensionRows = "";
   if (data.scores && typeof data.scores === "object") {
@@ -346,7 +345,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           from: FROM,
           to: [data.email],
-          subject: `${profileName}, ${firstName}`,
+          subject: "Your ANSR Pulse result — ELIA",
           html: emailHtml,
         }),
       });
